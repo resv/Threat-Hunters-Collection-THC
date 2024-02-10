@@ -86,11 +86,12 @@ $IPAddress = $env:HostIP = (
 
 $Menu = @" 
 $BannerC
-Waiting for Host information
 [A] Get Host information
 [B] Download & Install $AppBName 
 [C] Download & Run $AppCName
-[D] Download & Run $AppDName
+[D] Download & Run $AppDName 
+[Z] Close and exit `n
+Waiting for your input `n`n
 "@
 
 
