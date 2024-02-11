@@ -1,8 +1,8 @@
 
+#(go down to execution line)
 
 
-
-# Initialize Variables (go down to execution line)
+# VARIABLES - BANNERS
 $Banner= @"
 _________________________________________________________________________________
   ________  ______  _________  ______   __  ____  ___   __________________  _____
@@ -63,56 +63,83 @@ ________________________________________________________________________________
 
 "@
 
+$BannerE = @"
+_________________________________________________________________________________
+               ________________   _____ _________    ____  ________  __
+              / ____/_  __/  _/  / ___// ____/   |  / __ \/ ____/ / / /
+             / /     / /  / /    \__ \/ __/ / /| | / /_/ / /   / /_/ / 
+            / /___  / / _/ /    ___/ / /___/ ___ |/ _, _/ /___/ __  /  
+            \____/ /_/ /___/   /____/_____/_/  |_/_/ |_|\____/_/ /_/
+_________________________________________________________________________________
+
+"@
+
 $BannerX = @"
 _________________________________________________________________________________
-                    ___   __  ____________  ____  __  ___   _______
-                   /   | / / / /_  __/ __ \/ __ \/ / / / | / / ___/
-                  / /| |/ / / / / / / / / / /_/ / / / /  |/ /\__ \ 
-                 / ___ / /_/ / / / / /_/ / _, _/ /_/ / /|  /___/ / 
-                /_/  |_\____/ /_/  \____/_/ |_|\____/_/ |_//____/
+                   __________  _   ___________   ____________
+                  / ____/ __ \/ | / /_  __/   | / ____/_  __/
+                 / /   / / / /  |/ / / / / /| |/ /     / /   
+                / /___/ /_/ / /|  / / / / ___ / /___  / /    
+                \____/\____/_/ |_/ /_/ /_/  |_\____/ /_/
 _________________________________________________________________________________
 
 "@
 
 
 $HealthCheck = "False"
-$Hostname = hostname
-$Profile = $env:userprofile
-$PrintWorkingDirectory = pwd
-$AppURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
-$ParentAppCFolder = "Threat Hunting Collection"
-$SysmonFolder = "Sysmon vXX.XX"
+
 # VARIABLES - ParentFolder
+$ParentFolder = "Threat Hunters Collection"
 
-# VARIABLES - ParentAppFolder
+# VARIABLES - AppA (Host Info)
+    $AppAName = "Host Info"
+    $Hostname = hostname
+    $Profile = $env:userprofile
+    $PrintWorkingDirectory = pwd
+        #Grab IP info
+        $IPAddress = $env:HostIP = (
+            Get-NetIPConfiguration |
+            Where-Object {
+                $_.IPv4DefaultGateway -ne $null -and
+                $_.NetAdapter.Status -ne "Disconnected"
+            }
+        ).IPv4Address.IPAddress
 
-# VARIABLES - AppFolder
 
-# VARIABLES - AppName
-$AppAName = "Host Info"
-$AppBName = "Sysmon vXX.XX"
-$AppCName = "DeepBlueCLI"
-$AppDName = ""
-$AppXName = ""
-$AppZName = ""
-$AppZZName = ""
+# VARIABLES - AppB (Sysmon)
+    $AppBName = "Sysmon vXX.XX"
+    $ParentAppCFolder = "DBCLI"
+
+# VARIABLES - AppC (DeepBlueCLI)
+    $AppCName = "DeepBlueCLI"
+        # URLs
+        $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
+        $AppCURLBackup = ""
+
+# VARIABLES - AppD (Autoruns)
+    $AppDName = "Autoruns"
+
+# VARIABLES - AppE (CTI Search Online Reputation Search)
+    $AppEName = "CTI Search" #(Online Reputation Search)
+
+
+# VARIABLES - AppX (More Info & Contact)
+    $AppXName = "More Info & Contact"
+    $DiscordLink = "https://discord.gg/tQn4SWDG"
+    $GithubLink = ""
+    $EmailLink = ""
+    $LinkedinLink = ""
+
+# VARIABLES - AppZ
+    $AppZName = ""
+
+# VARIABLES - AppZZ
+    $AppZZName = ""
 
 
 
-# VARIABLES - Grab IP info
-$IPAddress = $env:HostIP = (
-    Get-NetIPConfiguration |
-    Where-Object {
-        $_.IPv4DefaultGateway -ne $null -and
-        $_.NetAdapter.Status -ne "Disconnected"
-    }
-).IPv4Address.IPAddress
 
-#Contact Variables
-$DiscordLink = "https://discord.gg/tQn4SWDG"
-$GithubLink = ""
-$EmailLink = ""
-$LinkedinLink = ""
+
 
 
 $Menu = @" 
@@ -121,6 +148,7 @@ $BannerC
  [B] Download & Install $AppBName 
  [C] Download & Run $AppCName
  [D] Download & Run $AppDName
+ [E] Download & Run $AppEName
  [X] More Info & Contact 
  [Z] Exit THTK, keep CLI open
  [ZZ] Exit, close CLI `n
@@ -190,7 +218,7 @@ Write-Host $Banner
 
 #------- Some Stats -------
 # Notify DBCLI URL being used
-Write-host "[Application URL]:" $AppURL
+Write-host "[Application URL]:" $AppCURL
 
 # Notify working directory
 Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
