@@ -93,6 +93,7 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppA (Host Info)
     $AppAName = "Host Info"
+    $AppAdescription = "Spec viewer"
     $Hostname = hostname
     $Profile = $env:userprofile
     $PrintWorkingDirectory = pwd
@@ -108,34 +109,38 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
+    $AppBdescription = "Event Collector"
     $ParentAppCFolder = "DBCLI"
 
 # VARIABLES - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
+    $AppCdescription = "Sysmon Reviewer"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
+    $AppDdescription = "Scheduled tasks/persistence checker"
 
 # VARIABLES - AppE (CTI Search Online Reputation Search)
-    $AppEName = "CTI Search" #(Online Reputation Search)
-
+    $AppEName = "CTI Search" 
+    $AppEdescription = "Online Reputation Searcher"
 
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "More Info & Contact"
     $DiscordLink = "https://discord.gg/tQn4SWDG"
-    $GithubLink = ""
-    $EmailLink = ""
-    $LinkedinLink = ""
+    $GithubLink = "https://github.com/resv"
+    $EmailLink = "info@atomkim.com"
+    $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
 
-# VARIABLES - AppZ
+# VARIABLES - AppZ (Exit and keep CLI Open)
     $AppZName = ""
+    $AppZDescrption = ""
 
 # VARIABLES - AppZZ
     $AppZZName = ""
-
+    $AppZZDescrption = ""
 
 
 
@@ -143,20 +148,20 @@ $ParentFolder = "Threat Hunters Collection"
 
 
 $Menu = @" 
-$BannerC
- [A] Get Host information
- [B] Download & Install $AppBName 
- [C] Download & Run $AppCName
- [D] Download & Run $AppDName
- [E] Download & Run $AppEName
- [X] More Info & Contact 
- [Z] Exit THTK, keep CLI open
- [ZZ] Exit, close CLI `n
+$Banner
+ [A] Get Host information $AppAName - $AppADescription
+ [B] Download & Install $AppBName - $AppBDescription
+ [C] Download & Run $AppCName - $AppCDescription
+ [D] Download & Run $AppDName - $AppDDescription
+ [E] Download & Run $AppEName - $AppEDescription
+ [X] More Info & Contact - $AppXDescription
+ [Z] Exit THC, keep CLI open - $AppZDescription
+ [ZZ] Exit THC, close CLI `n - $AppZZDescription
 Waiting for your input `n`n
 "@
 
 
-
+# VARIABLES - Status notifications
 $StatusCreatedParentAppCFolder = @"
 ---------- [ Created folder on your desktop called `"$ParentAppCFolder`" ] ---------- `n
 "@
