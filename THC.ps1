@@ -111,6 +111,13 @@ $ParentFolder = "Threat Hunters Collection"
     $AppBName = "Sysmon vXX.XX"
     $AppBdescription = "Event Collector"
     $ParentAppCFolder = "DBCLI"
+    $MenuAppC = @"
+    [0] Back to Main Menu
+    [1] Download $AppBName from main source
+    [2] Download $AppBName from backup source
+    [3] Install $AppBName 
+    [4] Additional configurations for $AppBName
+"@
 
 # VARIABLES - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
@@ -118,14 +125,31 @@ $ParentFolder = "Threat Hunters Collection"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
+    $MenuAppC = @"
+    [0] Back to Main Menu
+    [1] Download $AppCName from main source
+    [2] Download $AppCName from backup source
+    [3] Commands for $AppCName for current host
+    [4] Commands for $AppCName for remote host
+"@
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
     $AppDdescription = "Scheduled tasks/persistence checker"
+    $MenuAppD = @"
+    [0] Back to Main Menu
+    [1] Download $AppDName from main source
+    [2] Download $AppDName from backup source
+    [3] Commands for $AppDName
+"@
 
 # VARIABLES - AppE (CTI Search Online Reputation Search)
     $AppEName = "CTI Search" 
     $AppEdescription = "Online Reputation Searcher"
+    $MenuAppE= @"
+    Commands: ipx <ip> | dx <domain> | ex <email> | df <defanglink> | 0 (Main menu) |
+    You are in $AppEName mode, provide your query.
+"@
 
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "More Info & Contact"
@@ -135,19 +159,19 @@ $ParentFolder = "Threat Hunters Collection"
     $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
 
 # VARIABLES - AppZ (Exit and keep CLI Open)
-    $AppZName = ""
-    $AppZDescrption = ""
+    $AppZName = "Exit THC, keep shell open"
+    $AppZDescrption = "Exits THC and keep shell open"
 
 # VARIABLES - AppZZ
-    $AppZZName = ""
-    $AppZZDescrption = ""
+    $AppZZName = "Exit THC and close shell"
+    $AppZZDescrption = "Exit THC and close shell"
 
 
 
 
 
 
-$Menu = @" 
+$MenuMain = @" 
 $Banner
  [A] Get Host information $AppAName - $AppADescription
  [B] Download & Install $AppBName - $AppBDescription
