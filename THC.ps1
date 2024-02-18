@@ -105,13 +105,19 @@ $ParentFolder = "Threat Hunters Collection"
                 $_.NetAdapter.Status -ne "Disconnected"
             }
         ).IPv4Address.IPAddress
-
+    $MenuAppA = @"
+    $BannerA
+    $Hostname
+    $Profile
+    $PrintWorkingDirectory
+"@
 
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
     $AppBdescription = "Event Collector"
     $ParentAppCFolder = "DBCLI"
-    $MenuAppC = @"
+    $MenuAppB = @"
+    $BannerB
     [0] Back to Main Menu
     [1] Download $AppBName from main source
     [2] Download $AppBName from backup source
@@ -126,6 +132,7 @@ $ParentFolder = "Threat Hunters Collection"
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
     $MenuAppC = @"
+    $BannerC
     [0] Back to Main Menu
     [1] Download $AppCName from main source
     [2] Download $AppCName from backup source
@@ -137,6 +144,7 @@ $ParentFolder = "Threat Hunters Collection"
     $AppDName = "Autoruns"
     $AppDdescription = "Scheduled tasks/persistence checker"
     $MenuAppD = @"
+    $BannerD
     [0] Back to Main Menu
     [1] Download $AppDName from main source
     [2] Download $AppDName from backup source
@@ -144,9 +152,10 @@ $ParentFolder = "Threat Hunters Collection"
 "@
 
 # VARIABLES - AppE (CTI Search Online Reputation Search)
-    $AppEName = "CTI Search" 
+    $AppEName = "CTI Search"
     $AppEdescription = "Online Reputation Searcher"
     $MenuAppE= @"
+    $BannerE 
     Commands: ipx <ip> | dx <domain> | ex <email> | df <defanglink> | 0 (Main menu) |
     You are in $AppEName mode, provide your query.
 "@
@@ -170,7 +179,7 @@ $ParentFolder = "Threat Hunters Collection"
 
 
 
-
+# MainMenu
 $MenuMain = @" 
 $Banner
  [A] Get Host information $AppAName - $AppADescription
@@ -199,15 +208,16 @@ $StatusChangedDirToAppFolder = @"
 
 # Execution starts here:
 # -------------------------------------------------------------------
+
+
 while($true) {
-    $readHostValue = Read-Host -Prompt "$Menu"
+    $readHostValue = Read-Host -Prompt "$MenuMain"
     switch ($readHostValue) {
         'a' {
-            #Insert logic here
-            return #Exits the script
+            $MenuAppA
         }
         'b' {
-            #Insert logic here
+            $MenuAppB
             return #Exits the script
         }
         'c' {
