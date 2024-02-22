@@ -1,4 +1,4 @@
-
+ 
 #(go down to execution line)
 
 
@@ -96,7 +96,7 @@ $ParentFolder = "Threat Hunters Collection"
     $AppAdescription = "Spec viewer"
     $Hostname = hostname
     $Profile = $env:userprofile
-    $PrintWorkingDirectory = pwd
+    $PrintWorkingDirectory = Get-Location
         #Grab IP info
         $IPAddress = $env:HostIP = (
             Get-NetIPConfiguration |
@@ -131,14 +131,36 @@ $ParentFolder = "Threat Hunters Collection"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
+
+    # VARIABLES - Status notifications
+    $StatusCreatedParentAppCFolder = @"
+    ---------- [ Created folder on your desktop called `"$ParentAppCFolder`" ] ---------- `n
+    "@
+    $StatusDownloadedApp = @"
+    ---------- [ Downloaded and extracted `"$AppCName`" ] ----------------- `n
+    "@
+    $StatusChangedDirToAppFolder = @"
+    ---------- [ Changed working directory to `"$AppCName`" ] ------------- `n
+    "@
+
+    $MenuAppCTest = "HI"
     $MenuAppC = @"
-    $BannerC
-    [0] Back to Main Menu
-    [1] Download $AppCName from main source
-    [2] Download $AppCName from backup source
-    [3] Commands for $AppCName for current host
-    [4] Commands for $AppCName for remote host
-"@
+        $BannerC
+        [0] Back to Main Menu
+        [1] Download $AppCName from main source
+        [2] Download $AppCName from backup source
+        [3] Commands for $AppCName for current host
+        [4] Commands for $AppCName for remote host
+        "@
+
+    $AppCCommands = @"
+    .\DeepBlue.ps1 .\evtx\psattack-security.evtx | Format-List
+    .\evtx\psattack-security.evtx | Format-Table
+    .\evtx\psattack-security.evtx | Out-GridView
+    .\evtx\psattack-security.evtx | ConvertTo-Html
+    .\evtx\psattack-security.evtx | ConvertTo-Json
+    .\evtx\psattack-security.evtx | ConvertTo-Xml
+    "@
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
@@ -194,16 +216,59 @@ Waiting for your input `n`n
 "@
 
 
-# VARIABLES - Status notifications
-$StatusCreatedParentAppCFolder = @"
----------- [ Created folder on your desktop called `"$ParentAppCFolder`" ] ---------- `n
-"@
-$StatusDownloadedApp = @"
----------- [ Downloaded and extracted `"$AppCName`" ] ----------------- `n
-"@
-$StatusChangedDirToAppFolder = @"
----------- [ Changed working directory to `"$AppCName`" ] ------------- `n
-"@
+
+
+
+function StartDBCLI {    
+    # Welcome Banner
+    Write-Host $Banner
+
+    #DBCLI
+    #------- Some Stats -------
+    # Notify DBCLI URL being used
+    Write-host "[Application URL]:" $AppCURL
+
+    # Notify working directory
+    Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
+
+    # Notify hostname & IP address
+    Write-Host "[Hostname]:" $Hostname
+    Write-Host "[Profile]:" $Profile
+    Write-Host "[IP Address ]:" $IPAddress
+
+    "`n"
+
+    # Create the ParentAppCFolder (Also hiding the Powershell Output)
+    $null = new-item -path "$($env:userprofile)\Desktop" -name $ParentAppCFolder -itemtype directory -Force
+    Write-Host $StatusCreatedParentAppCFolder
+
+    # Change the directory to ParentAppCFolder
+    set-location "$($env:userprofile)\Desktop\$ParentAppCFolder"
+
+    # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
+    Invoke-WebRequest 'https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip' -OutFile .\$AppCName.zip
+    Expand-Archive .\$AppCName.zip .\
+    Rename-Item .\$AppCName-master .\$AppCName
+    Remove-Item .\$AppCName.zip
+    Write-Host $StatusDownloadedApp
+
+    # Change the directory to AppCName
+    set-location "$($env:userprofile)\Desktop\$ParentAppCFolder\$AppCName"
+    Write-Host $StatusChangedDirToAppFolder
+
+    # Check if staging and initialization is complete
+    $HealthCheck = "True"
+
+        if ($HealthCheck -eq "True") 
+        {   
+            Write-Host $AppCCommands
+            Write-Host "`n Ready for Hunting... `n"
+        }
+        else
+        {
+            Write-Host "Intialization process has failed..."
+        }
+}
 
 
 # Execution starts here:
@@ -218,11 +283,9 @@ while($true) {
         }
         'b' {
             $MenuAppB
-            return #Exits the script
         }
         'c' {
-            #Insert logic here
-            return #Exits the script
+            Write-Host $MenuAppCTest
         }
         'd' {
             #Insert logic here
@@ -239,63 +302,10 @@ while($true) {
         }
         
         Default {
-            Write-Host "Invalid Input"
+            Clear
+            Write-Host "`n`n`n"------------------------------- Invalid Input ----------------------------------"`n`n`n"
         }
     }
 }
 
-
-
-
-
-# Change CWD to the desktop
-set-location "$($env:userprofile)\Desktop\"
-
-
-# Welcome Banner
-Write-Host $Banner
-
-#------- Some Stats -------
-# Notify DBCLI URL being used
-Write-host "[Application URL]:" $AppCURL
-
-# Notify working directory
-Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
-
-# Notify hostname & IP address
-Write-Host "[Hostname]:" $Hostname
-Write-Host "[Profile]:" $Profile
-Write-Host "[IP Address ]:" $IPAddress
-
-"`n"
-
-# Create the ParentAppCFolder (Also hiding the Powershell Output)
-$null = new-item -path "$($env:userprofile)\Desktop" -name $ParentAppCFolder -itemtype directory -Force
-Write-Host $StatusCreatedParentAppCFolder
-
-# Change the directory to ParentAppCFolder
-set-location "$($env:userprofile)\Desktop\$ParentAppCFolder"
-
-# Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
-Invoke-WebRequest 'https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip' -OutFile .\$AppCName.zip
-Expand-Archive .\$AppCName.zip .\
-Rename-Item .\$AppCName-master .\$AppCName
-Remove-Item .\$AppCName.zip
-Write-Host $StatusDownloadedApp
-
-# Change the directory to AppCName
-set-location "$($env:userprofile)\Desktop\$ParentAppCFolder\$AppCName"
-Write-Host $StatusChangedDirToAppFolder
-
-# Check if staging and initialization is complete
-$HealthCheck = "True"
-
-if ($HealthCheck -eq "True")
-{
-    Write-Host "`n Ready for Hunting... `n"
-}
-else
-{
-    Write-Host "Intialization process has failed..."
-}
 
