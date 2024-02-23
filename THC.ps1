@@ -110,23 +110,23 @@ $ParentFolder = "Threat Hunters Collection"
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
     $AppBdescription = "Get $AppBName from MS and install"
-    $ParentAppBFolder = "$AppBName"
+    $AppBFolder = "$AppBName"
 
 # VARIABLES - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
     $AppCdescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
+    $AppCFolder = "DeepBlueCLI"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
-    $ParentAppCFolder = "DBCLI"
-
+    
     # VARIABLES - Status notifications
-    $StatusCCreatedParentAppCFolder = @"
-    > [ Adding new directory `"$ParentAppCFolder`" to `"$ParentFolder`" ]`n
+    $StatusCCreatedAppCFolder = @"
+    > [ Adding new directories Desktop > `"$ParentFolder`" > `"$AppCFolder`" ]`n
 "@
 
-    $StatusCChangedDirToParentAppCFolder = @"
-    >> [ Changed working directory to `"$ParentAppCFolder`" ]`n
+    $StatusCChangedDirToAppCFolder = @"
+    >> [ Changed working directory to `"$AppCFolder`" ]`n
 "@
 
     $StatusCDownloadApp = @"
@@ -142,7 +142,7 @@ $ParentFolder = "Threat Hunters Collection"
 "@
 
     $StatusCChangedDirToAppFolder = @"
-    >>>>>> [ You are in the `"$AppCName`" directory ]`n
+    >>>>>> [ You are in the `"$AppCFolder`" directory ]`n
 "@
 
     $StatusCReady = @"
@@ -234,12 +234,12 @@ function StartDBCLI {
     "`n"
 
     # Create the ParentAppCFolder in ParentFolder (Also hiding the Powershell Output)
-    $null = new-item -path "$($env:userprofile)\Desktop\$ParentFolder" -name $ParentAppCFolder -itemtype directory -Force
-    Write-Host $StatusCCreatedParentAppCFolder
+    $null = new-item -path "$($env:userprofile)\Desktop" -name $ParentFolder -itemtype directory -Force
+    Write-Host $StatusCCreatedAppCFolder
 
     # Change the directory to ParentAppCFolder
-    set-location "$($env:userprofile)\Desktop\$ParentFolder\$ParentAppCFolder"
-    Write-Host $StatusCChangedDirToParentAppCFolder
+    set-location "$($env:userprofile)\Desktop\$ParentFolder"
+    Write-Host $StatusCChangedDirToAppCFolder
    
     # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
     Write-Host $StatusCDownloadApp
@@ -253,7 +253,7 @@ function StartDBCLI {
     Write-Host $StatusCRemoveDownload
     
     # Change the directory to AppCName
-    set-location "$($env:userprofile)\Desktop\$ParentFolder\$ParentAppCFolder\$AppCName"
+    set-location "$($env:userprofile)\Desktop\$ParentFolder\$AppCFolder"
     Write-Host $StatusCChangedDirToAppFolder
 
     # Check if staging and initialization is complete
