@@ -93,7 +93,7 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppA (Host Info)
     $AppAName = "Host Info"
-    $AppAdescription = "Spec viewer"
+    $AppAdescription = "Get Host information"
     $Hostname = hostname
     $Profile = $env:userprofile
     $PrintWorkingDirectory = Get-Location
@@ -105,97 +105,85 @@ $ParentFolder = "Threat Hunters Collection"
                 $_.NetAdapter.Status -ne "Disconnected"
             }
         ).IPv4Address.IPAddress
-    $MenuAppA = @"
-    $BannerA
-    $Hostname
-    $Profile
-    $PrintWorkingDirectory
-"@
+
 
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
-    $AppBdescription = "Event Collector"
+    $AppBdescription = "Get $AppBName from MS and install"
     $ParentAppCFolder = "DBCLI"
-    $MenuAppB = @"
-    $BannerB
-    [0] Back to Main Menu
-    [1] Download $AppBName from main source
-    [2] Download $AppBName from backup source
-    [3] Install $AppBName 
-    [4] Additional configurations for $AppBName
-"@
 
 # VARIABLES - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
-    $AppCdescription = "Sysmon Reviewer"
+    $AppCdescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
 
     # VARIABLES - Status notifications
-    $StatusCreatedParentAppCFolder = @"
-    ---------- [ Created folder on your desktop called `"$ParentAppCFolder`" ] ---------- `n
-    "@
-    $StatusDownloadedApp = @"
-    ---------- [ Downloaded and extracted `"$AppCName`" ] ----------------- `n
-    "@
-    $StatusChangedDirToAppFolder = @"
-    ---------- [ Changed working directory to `"$AppCName`" ] ------------- `n
-    "@
+    $StatusCCreatedParentAppCFolder = @"
+    > [ Adding new directory `"$ParentAppCFolder`" to `"$ParentFolder`" ]`n
+"@
 
-    $MenuAppCTest = "HI"
-    $MenuAppC = @"
-        $BannerC
-        [0] Back to Main Menu
-        [1] Download $AppCName from main source
-        [2] Download $AppCName from backup source
-        [3] Commands for $AppCName for current host
-        [4] Commands for $AppCName for remote host
-        "@
+    $StatusCChangedDirToParentAppCFolder = @"
+    >> [ Changed working directory to `"$ParentAppCFolder`" ]`n
+"@
+
+    $StatusCDownloadApp = @"
+    >>> [ Downloading `"$AppCName`"]`n
+"@
+
+    $StatusCExtractedApp = @"
+    >>>> [ Extracted `"$AppCName`" ]`n
+"@
+
+    $StatusCRemoveDownload = @"
+    >>>>> [ Removed downloaded files for `"$AppCName`" ]`n
+"@
+
+    $StatusCChangedDirToAppFolder = @"
+    >>>>>> [ You are in the `"$AppCName`" directory ]`n
+"@
+
+    $StatusCReady = @"
+    >>>>>>> [ Ready for Hunting... ]`n
+"@
 
     $AppCCommands = @"
-    .\DeepBlue.ps1 .\evtx\psattack-security.evtx | Format-List
-    .\evtx\psattack-security.evtx | Format-Table
-    .\evtx\psattack-security.evtx | Out-GridView
-    .\evtx\psattack-security.evtx | ConvertTo-Html
-    .\evtx\psattack-security.evtx | ConvertTo-Json
-    .\evtx\psattack-security.evtx | ConvertTo-Xml
-    "@
+    ---------- [ `"$AppCName`" Commands ] -------------
+    __________________________________________________
+    |                                                 |
+    | .\evtx\psattack-security.evtx | Format-List     |
+    | .\evtx\psattack-security.evtx | Format-Table    |
+    | .\evtx\psattack-security.evtx | Out-GridView    |
+    | .\evtx\psattack-security.evtx | ConvertTo-Html  |
+    | .\evtx\psattack-security.evtx | ConvertTo-Json  |
+    | .\evtx\psattack-security.evtx | ConvertTo-Xml   |
+    |_________________________________________________|`n
+"@
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
-    $AppDdescription = "Scheduled tasks/persistence checker"
-    $MenuAppD = @"
-    $BannerD
-    [0] Back to Main Menu
-    [1] Download $AppDName from main source
-    [2] Download $AppDName from backup source
-    [3] Commands for $AppDName
-"@
+    $AppDDescription = "Scheduled tasks/persistence checker"
 
 # VARIABLES - AppE (CTI Search Online Reputation Search)
     $AppEName = "CTI Search"
     $AppEdescription = "Online Reputation Searcher"
-    $MenuAppE= @"
-    $BannerE 
-    Commands: ipx <ip> | dx <domain> | ex <email> | df <defanglink> | 0 (Main menu) |
-    You are in $AppEName mode, provide your query.
-"@
 
 # VARIABLES - AppX (More Info & Contact)
-    $AppXName = "More Info & Contact"
+    $AppXName = "Contact"
+    $AppXDescription = "More Info & Contact"
     $DiscordLink = "https://discord.gg/tQn4SWDG"
     $GithubLink = "https://github.com/resv"
     $EmailLink = "info@atomkim.com"
     $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
 
 # VARIABLES - AppZ (Exit and keep CLI Open)
-    $AppZName = "Exit THC, keep shell open"
-    $AppZDescrption = "Exits THC and keep shell open"
+    $AppZName = "Soft Exit"
+    $AppZDescription = "Exit THC and keep shell open"
 
 # VARIABLES - AppZZ
-    $AppZZName = "Exit THC and close shell"
-    $AppZZDescrption = "Exit THC and close shell"
+    $AppZZName = "Hard Exit"
+    $AppZZDescription = "Exit THC and close shell"
 
 
 
@@ -204,24 +192,26 @@ $ParentFolder = "Threat Hunters Collection"
 # MainMenu
 $MenuMain = @" 
 $Banner
- [A] Get Host information $AppAName - $AppADescription
- [B] Download & Install $AppBName - $AppBDescription
- [C] Download & Run $AppCName - $AppCDescription
- [D] Download & Run $AppDName - $AppDDescription
- [E] Download & Run $AppEName - $AppEDescription
- [X] More Info & Contact - $AppXDescription
- [Z] Exit THC, keep CLI open - $AppZDescription
- [ZZ] Exit THC, close CLI `n - $AppZZDescription
-Waiting for your input `n`n
+  [A] $AppAName - $AppADescription
+  [B] $AppBName - $AppBDescription
+  [C] $AppCName - $AppCDescription
+  [D] $AppDName - $AppDDescription
+  [E] $AppEName - $AppEDescription
+  [X] $AppXName - $AppXDescription
+  [Z] $AppZName - $AppZDescription
+ [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
 
 
 
 
-function StartDBCLI {    
-    # Welcome Banner
-    Write-Host $Banner
+function StartDBCLI {   
+    #Clear
+    clear
+
+    # Welcome BannerAppC
+    Write-Host $BannerC
 
     #DBCLI
     #------- Some Stats -------
@@ -240,29 +230,34 @@ function StartDBCLI {
 
     # Create the ParentAppCFolder (Also hiding the Powershell Output)
     $null = new-item -path "$($env:userprofile)\Desktop" -name $ParentAppCFolder -itemtype directory -Force
-    Write-Host $StatusCreatedParentAppCFolder
+    Write-Host $StatusCCreatedParentAppCFolder
 
     # Change the directory to ParentAppCFolder
     set-location "$($env:userprofile)\Desktop\$ParentAppCFolder"
-
+    Write-Host $StatusCChangedDirToParentAppCFolder
+   
     # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
+    Write-Host $StatusCDownloadApp
     Invoke-WebRequest 'https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip' -OutFile .\$AppCName.zip
+    
+    
+    $StatusCExtractedApp
     Expand-Archive .\$AppCName.zip .\
     Rename-Item .\$AppCName-master .\$AppCName
     Remove-Item .\$AppCName.zip
-    Write-Host $StatusDownloadedApp
-
+    Write-Host $StatusCRemoveDownload
+    
     # Change the directory to AppCName
     set-location "$($env:userprofile)\Desktop\$ParentAppCFolder\$AppCName"
-    Write-Host $StatusChangedDirToAppFolder
+    Write-Host $StatusCChangedDirToAppFolder
 
     # Check if staging and initialization is complete
     $HealthCheck = "True"
 
         if ($HealthCheck -eq "True") 
         {   
+            Write-Host $StatusCReady
             Write-Host $AppCCommands
-            Write-Host "`n Ready for Hunting... `n"
         }
         else
         {
@@ -275,37 +270,40 @@ function StartDBCLI {
 # -------------------------------------------------------------------
 
 
-while($true) {
-    $readHostValue = Read-Host -Prompt "$MenuMain"
-    switch ($readHostValue) {
-        'a' {
-            $MenuAppA
-        }
-        'b' {
-            $MenuAppB
-        }
-        'c' {
-            Write-Host $MenuAppCTest
-        }
-        'd' {
-            #Insert logic here
-            return #Exits the script
-        }
-        'x' {
-            #Insert logic here
-            return #Exits the script
-        }
-        'z' {
-            #Exit CLI
-            exit
-            return #Exits the script
-        }
-        
-        Default {
-            Clear
-            Write-Host "`n`n`n"------------------------------- Invalid Input ----------------------------------"`n`n`n"
-        }
-    }
+function Show-Menu {
+    Clear-Host
+    Write-Host $MenuMain
 }
 
+
+do
+ {
+    Show-Menu
+    $selection = Read-Host "Standing by"
+    switch ($selection)
+    {
+        'A' {
+        'You chose option #1'
+        return
+        } 
+        'B' {
+        'You chose option #2'
+        } 
+        'C' {
+        StartDBCLI
+        return
+        } 
+        'D' {
+        'You chose option #3'
+        } 
+        'E' {
+        'You chose option #3'
+        } 
+        'F' {
+        'You chose option #3'
+        }
+    }
+    pause
+ }
+ until ($selection -eq 'q')
 
