@@ -148,13 +148,16 @@ $ParentFolder = "Threat Hunters Collection"
     >>>>>>> [ Ready for Hunting... ]`n
 "@
 
+    $StatusCLoading = @"
+    >>>>>>>> [ Retrieving Data... ]`n
+"@
+
     $AppCCommands = @"
-    ---------- [ `"$AppCName`" Commands ] -------------
-    _____________________________________________________________________________________________________________________
-    |                                                                                                                    |
-    | [list]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List    |
-    | [table] .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table   |
-    | [grid]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView   |
+     ____________________________________________________________________________________________________________________
+    |                                             [ `"$AppCName`" Commands ]                                             |
+    |*[list]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List    |
+    |*[table] .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table   |
+    |*[grid]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView   |
     | [html]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html |
     | [json]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json |
     | [xml]   .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml  |
@@ -162,12 +165,12 @@ $ParentFolder = "Threat Hunters Collection"
 "@
 
 #DBCLI Quick and easy variables for user to input instead of copy/pasting
-    $DBCLIList = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List"
-    $DBCLITable = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table"
-    $DBCLIGrid = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView"
-    $DBCLIHtml = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html"
-    $DBCLIJson = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json"
-    $DBCLIXml = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml"
+    $DBCLIList = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List"
+    $DBCLITable = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table"
+    $DBCLIGrid = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView"
+    $DBCLIHtml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html"
+    $DBCLIJson = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json"
+    $DBCLIXml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml"
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
@@ -258,32 +261,47 @@ function StartDBCLI {
         if ($HealthCheck -eq "True") 
         {   
             Write-Host $StatusCReady
-            Write-Host $AppCCommands
             do
             {
                 # Show-Menu <- this is a function, commented out fo rnow
-                $selection = Read-Host "Ready for Hunting... "
+                $selection = Read-Host $AppCCommands
                 switch ($selection)
                 {
                     'List' {
-                    $DBCLIList
-                    return
+                    Write-Host = $StatusCLoading
+                    Invoke-expression $DBCLIList
                     } 
                     'Table' {
-                    $DBCLITable
+                    Write-Host = $StatusCLoading
+                    Invoke-expression $DBCLITable
                     } 
                     'Grid' {
-                    DBCLIGrid
-                    return
+                    Write-Host = $StatusCLoading
+                    Invoke-expression $DBCLIGrid
                     } 
                     'HTML' {
-                    DBCLIHtml
+                    Write-Host = $StatusCLoading
+                    Invoke-expression $DBCLIHtml
                     } 
                     'JSON' {
-                    $DBCLIJson
+                    Write-Host = $StatusCLoading
+                    Invoke-expression $DBCLIJson
                     } 
                     'XML' {
-                    $DBCLIXml
+                    Write-Host = $StatusCLoading
+                    Invoke-expression $DBCLIXml
+                    }
+                    'Export' {
+                    # Invoke DBCLI Variable
+                    }
+                    'Back' {
+                    # Invoke DBCLI Variable to main                    
+                    }
+                    'Exit' {
+                    # Invoke DBCLI Variable to close
+                    }
+                    'Wipe' {
+                    # Invoke DBCLI Variable to wipe DBCLI and possibly THC
                     }
                 }
                 pause
