@@ -228,12 +228,12 @@ function StartDBCLI {
 
     "`n"
 
-    # Create the ParentAppCFolder (Also hiding the Powershell Output)
-    $null = new-item -path "$($env:userprofile)\Desktop" -name $ParentAppCFolder -itemtype directory -Force
+    # Create the ParentAppCFolder in ParentFolder (Also hiding the Powershell Output)
+    $null = new-item -path "$($env:userprofile)\Desktop\$ParentFolder" -name $ParentAppCFolder -itemtype directory -Force
     Write-Host $StatusCCreatedParentAppCFolder
 
     # Change the directory to ParentAppCFolder
-    set-location "$($env:userprofile)\Desktop\$ParentAppCFolder"
+    set-location "$($env:userprofile)\Desktop\$ParentFolder\$ParentAppCFolder"
     Write-Host $StatusCChangedDirToParentAppCFolder
    
     # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
@@ -248,7 +248,7 @@ function StartDBCLI {
     Write-Host $StatusCRemoveDownload
     
     # Change the directory to AppCName
-    set-location "$($env:userprofile)\Desktop\$ParentAppCFolder\$AppCName"
+    set-location "$($env:userprofile)\Desktop\$ParentFolder\$ParentAppCFolder\$AppCName"
     Write-Host $StatusCChangedDirToAppFolder
 
     # Check if staging and initialization is complete
