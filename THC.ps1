@@ -110,7 +110,7 @@ $ParentFolder = "Threat Hunters Collection"
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
     $AppBdescription = "Get $AppBName from MS and install"
-    $ParentAppCFolder = "DBCLI"
+    $ParentAppBFolder = "$AppBName"
 
 # VARIABLES - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
@@ -118,6 +118,7 @@ $ParentFolder = "Threat Hunters Collection"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
         $AppCURLBackup = ""
+    $ParentAppCFolder = "DBCLI"
 
     # VARIABLES - Status notifications
     $StatusCCreatedParentAppCFolder = @"
@@ -319,13 +320,10 @@ function StartDBCLI {
 
 # Execution starts here:
 # -------------------------------------------------------------------
-
-
 function Show-Menu {
     Clear-Host
     Write-Host $MenuMain
 }
-
 
 do
  {
@@ -334,24 +332,24 @@ do
     switch ($selection)
     {
         'A' {
-        'You chose option #1'
+        'You chose option #A'
         return
         } 
         'B' {
-        'You chose option #2'
+        'You chose option #B'
         } 
         'C' {
         StartDBCLI
         return
         } 
         'D' {
-        'You chose option #3'
+        'You chose option #D'
         } 
         'E' {
-        'You chose option #3'
+        'You chose option #E'
         } 
         'F' {
-        'You chose option #3'
+        'You chose option #F'
         }
     }
     pause
