@@ -150,16 +150,24 @@ $ParentFolder = "Threat Hunters Collection"
 
     $AppCCommands = @"
     ---------- [ `"$AppCName`" Commands ] -------------
-    __________________________________________________
-    |                                                 |
-    | .\evtx\psattack-security.evtx | Format-List     |
-    | .\evtx\psattack-security.evtx | Format-Table    |
-    | .\evtx\psattack-security.evtx | Out-GridView    |
-    | .\evtx\psattack-security.evtx | ConvertTo-Html  |
-    | .\evtx\psattack-security.evtx | ConvertTo-Json  |
-    | .\evtx\psattack-security.evtx | ConvertTo-Xml   |
-    |_________________________________________________|`n
+    _____________________________________________________________________________________________________________________
+    |                                                                                                                    |
+    | [list]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List    |
+    | [table] .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table   |
+    | [grid]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView   |
+    | [html]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html |
+    | [json]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json |
+    | [xml]   .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml  |
+    |____________________________________________________________________________________________________________________|`n
 "@
+
+#DBCLI Quick and easy variables for user to input instead of copy/pasting
+    $DBCLIList = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List"
+    $DBCLITable = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table"
+    $DBCLIGrid = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView"
+    $DBCLIHtml = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html"
+    $DBCLIJson = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json"
+    $DBCLIXml = Write-Host ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml"
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
@@ -185,10 +193,6 @@ $ParentFolder = "Threat Hunters Collection"
     $AppZZName = "Hard Exit"
     $AppZZDescription = "Exit THC and close shell"
 
-
-
-
-
 # MainMenu
 $MenuMain = @" 
 $Banner
@@ -201,9 +205,6 @@ $Banner
   [Z] $AppZName - $AppZDescription
  [ZZ] $AppZZName - $AppZZDescription `n
 "@
-
-
-
 
 
 function StartDBCLI {   
@@ -258,6 +259,38 @@ function StartDBCLI {
         {   
             Write-Host $StatusCReady
             Write-Host $AppCCommands
+            do
+            {
+                # Show-Menu <- this is a function, commented out fo rnow
+                $selection = Read-Host "Ready for Hunting... "
+                switch ($selection)
+                {
+                    'List' {
+                    $DBCLIList
+                    return
+                    } 
+                    'Table' {
+                    $DBCLITable
+                    } 
+                    'Grid' {
+                    DBCLIGrid
+                    return
+                    } 
+                    'HTML' {
+                    DBCLIHtml
+                    } 
+                    'JSON' {
+                    $DBCLIJson
+                    } 
+                    'XML' {
+                    $DBCLIXml
+                    }
+                }
+                pause
+            }
+            until ($selection -eq 'q')
+
+
         }
         else
         {
