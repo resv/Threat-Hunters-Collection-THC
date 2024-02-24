@@ -152,17 +152,21 @@ $ParentFolder = "Threat Hunters Collection"
     $StatusCLoading = @"
     >>>>>>>> [ Retrieving Data... ]`n
 "@
-
+ 
     $AppCCommands = @"
-     ____________________________________________________________________________________________________________________
-    |                                             [ `"$AppCName`" Commands ]                                             |
-    |*[list]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List    |
-    |*[table] .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table   |
-    |*[grid]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView   |
-    | [html]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html |
-    | [json]  .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json |
-    | [xml]   .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml  |
-    |____________________________________________________________________________________________________________________|`n
+     _________________________________________________
+    |           [ DeepBlueCLI Quick Commands ]        |
+    |                                                 |
+    | *[list]   | Format-List                         |
+    | *[table]  | Format-Table                        |
+    | *[grid]   | Out-GridView                        |
+    |  [html]   | ConvertTo-Html                      |
+    |  [json]   | ConvertTo-Json                      |
+    |  [xml]    | ConvertTo-Xml                       |
+    |  [export] | Export Raw Log                      |
+    |  [help]   | Remind Me Where Sysmon is Stored    |
+    |  [back]   | Back to Main Menu                   |
+    |_________________________________________________|`n
 "@
 
 #DBCLI Quick and easy variables for user to input instead of copy/pasting
@@ -172,6 +176,12 @@ $ParentFolder = "Threat Hunters Collection"
     $DBCLIHtml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html"
     $DBCLIJson = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json"
     $DBCLIXml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml"
+    $DBCLIExport = "Copy-Item -Path C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx -Destination $(`"$env:userprofile`")\Desktop\`"$ParentFolder`""
+    $DBCLIHelp = @"
+    [  <Script> ----- <Sysmon Location> ------------------------------------------------------- | <Switch> -- ]
+      [ .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List ] `n
+"@
+    $DBCLIBack = ""
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
@@ -292,11 +302,11 @@ function StartDBCLI {
                     Write-Host = $StatusCLoading
                     Invoke-expression $DBCLIXml
                     }
-                    'Export' {
-                    # Invoke DBCLI Variable
+                    'export' {
+                    Invoke-expression $DBCLIExport
                     }
-                    'Back' {
-                    # Invoke DBCLI Variable to main                    
+                    'help' {
+                    Write-Host = $DBCLIhelp                    
                     }
                     'Exit' {
                     # Invoke DBCLI Variable to close
