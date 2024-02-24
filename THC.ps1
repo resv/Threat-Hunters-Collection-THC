@@ -253,7 +253,7 @@ function StartDBCLI {
             do
             {
                 # Show-Menu <- this is a function, commented out fo rnow
-                $selection = Read-Host $AppCCommands
+                $selection = Read-Host $BannerC $AppCCommands
                 switch ($selection)
                 {
                     'List' {
