@@ -121,37 +121,15 @@ $ParentFolder = "Threat Hunters Collection"
         $AppCURLBackup = ""
     
     # VARIABLES - Status notifications
-    $StatusCCreatedAppCFolder = @"
-    > [ Adding new directories Desktop > `"$ParentFolder`" > `"$AppCFolder`" ]`n
-"@
-
-    $StatusCChangedDirToAppCFolder = @"
-    >> [ Changed working directory to `"$AppCFolder`" ]`n
-"@
-
-    $StatusCDownloadApp = @"
-    >>> [ Downloading `"$AppCName`"]`n
-"@
-
-    $StatusCExtractedApp = @"
-    >>>> [ Extracted `"$AppCName`" ]`n
-"@
-
-    $StatusCRemoveDownload = @"
-    >>>>> [ Removed downloaded files for `"$AppCName`" ]`n
-"@
-
-    $StatusCChangedDirToAppFolder = @"
-    >>>>>> [ You are in the `"$AppCFolder`" directory ]`n
-"@
-
-    $StatusCReady = @"
-    >>>>>>> [ Ready for Hunting... ]`n
-"@
-
-    $StatusCLoading = @"
-    >>>>>>>> [ Retrieving Data... ]`n
-"@
+    $StatusCCreatedAppCFolder = "> [ Adding new directories Desktop > `"$ParentFolder`" > `"$AppCFolder`" ]`n"
+    $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to `"$AppCFolder`" ]`n"
+    $StatusCDownloadApp = ">>> [ Downloading `"$AppCName`" ]`n"
+    $StatusCExtractedApp = ">>>> [ Extracted `"$AppCName`" ]`n"
+    $StatusCRemoveDownload =  ">>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
+    $StatusCChangedDirToAppFolder = ">>>>>> [ You are in the `"$AppCFolder`" directory ]`n"
+    $StatusCReady = ">>>>>>> [ Ready for Hunting... ]`n"
+    $StatusCLoading = ">>>>>>>> [ Retrieving Data... ]`n"
+    $StatusCExportComplete = "`n >>>>>>>>>>> [ Exported to THC Directory ] <<<<<<<<<<<`n"
  
     $AppCCommands = @"
      _________________________________________________
@@ -304,9 +282,10 @@ function StartDBCLI {
                     }
                     'export' {
                     Invoke-expression $DBCLIExport
+                    Write-Host = $StatusCExportComplete
                     }
                     'help' {
-                    Write-Host = $DBCLIhelp                    
+                    Write-Host = $DBCLIHelp                    
                     }
                     'Exit' {
                     # Invoke DBCLI Variable to close
