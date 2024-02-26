@@ -14,6 +14,7 @@ ________________________________________________________________________________
          / /   / / / / /   / /   / __/ / /     / /  / // / / /  |/ /             
         / /___/ /_/ / /___/ /___/ /___/ /___  / / _/ // /_/ / /|  /              
         \____/\____/_____/_____/_____/\____/ /_/ /___/\____/_/ |_/
+
                                             Catalyzed with purpose by: Adam Kim
 _________________________________________________________________________________
 
@@ -105,7 +106,45 @@ $ParentFolder = "Threat Hunters Collection"
                 $_.NetAdapter.Status -ne "Disconnected"
             }
         ).IPv4Address.IPAddress
+    
+    $GetVolume = "Get-Volume | Sort-Object -Property BasePriority | Format-Table -GroupBy BasePriority -Wrap | Out-String"
+    $GetPartition = "Get-Partition"
+    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Format-Table | Out-String"
 
+# FUNCTION A
+    function HostInfo {
+        #Clear
+        clear
+
+        # Welcome BannerAppA
+        Write-Host $BannerA
+
+        # Notify hostname & IP address
+        Write-Host "[Hostname]:" $Hostname
+        Write-Host "[Profile]:" $Profile
+        Write-Host "[IP Address ]:" $IPAddress
+        
+        # Notify working directory
+        Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
+
+        #More PC Info
+        Get-ComputerInfo  -Property "TimeZone","OsLocalDateTime","CsManufacturer","CsModel","BiosName","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","OsArchitecture","OsVersion","CsProcessors","CsNumberOfLogicalProcessors","OsInstallDate","OsUptime","OsLastBootUpTime","OsBuildNumber","CsNetworkAdapters","WindowsEditionId"
+
+        #Drive Information
+        Write-Host "------------------------------------------------------- [ Drive Information ] -------------------------------------------------------"
+        Invoke-expression $GetVolume.Trim()
+        #This one below is ok, but the above might be better
+        #Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" | Format-Table -Property DeviceID, VolumeName, FreeSpace, Size, DriveType
+
+        #Partition Information (excluded for now)
+        #Write-Host "------------------------------------------------------ [ Parition Info Start ] -------------------------------------------------------"
+        #Invoke-expression $GetPartition
+        #Write-Host "------------------------------------------------------ [ Parition Info End ] -------------------------------------------------------"
+        
+        #All Desktops in Use or Not
+        Write-Host "--------------------------------------------------------- [ All Desktops ] ----------------------------------------------------------" 
+        Invoke-expression $GetCIM.Trim()
+    }
 
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
@@ -317,12 +356,11 @@ function Show-Menu {
 do
  {
     Show-Menu
-    $selection = Read-Host "Standing by"
+    $selection = Read-Host "Waiting for your input"
     switch ($selection)
     {
         'A' {
-        'You chose option #A'
-        return
+        HostInfo
         } 
         'B' {
         'You chose option #B'
