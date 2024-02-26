@@ -2,7 +2,7 @@
 For my defenders, across the world. 
 
 ### About
-Threat Hunter's Collection The Threat Hunter's Collection is a PowerShell script consolidating a diverse array of tools from open-source projects,including custom-built ones, to create a portable and comprehensive toolkit for cyber threat hunters.  
+Threat Hunter's Collection The Threat Hunter's Collection is a PowerShell script consolidating a diverse array of tools from open-source projects, including custom-built ones, to create a portable (on the go) and comprehensive toolkit for cyber threat hunters.  
 
 This collection aims to simplify the threat hunting process by providing a single point of access to various tools, eliminating the need for extensive setup, downloads, installations, or manual command retrieval. 
 
