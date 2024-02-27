@@ -125,10 +125,10 @@ $ParentFolder = "Threat Hunters Collection"
         Write-Host "[IP Address ]:" $IPAddress
         
         # Notify working directory
-        Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
+        #Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
 
         #More PC Info
-        Get-ComputerInfo  -Property "TimeZone","OsLocalDateTime","CsManufacturer","CsModel","BiosName","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","OsArchitecture","OsVersion","CsProcessors","CsNumberOfLogicalProcessors","OsInstallDate","OsUptime","OsLastBootUpTime","OsBuildNumber","CsNetworkAdapters","WindowsEditionId"
+        Get-ComputerInfo  -Property "CsNetworkAdapters","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","WindowsEditionId","OsArchitecture","OsBuildNumber","OsVersion","CsManufacturer","CsModel","BiosName","CsProcessors","CsNumberOfLogicalProcessors","TimeZone","OsInstallDate","OsLastBootUpTime","OsLocalDateTime","OsUptime"
 
         #Drive Information
         Write-Host "------------------------------------------------------- [ Drive Information ] -------------------------------------------------------"
