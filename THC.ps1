@@ -156,7 +156,7 @@ $ParentFolder = "Threat Hunters Collection"
     $AppCdescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
     $AppCFolder = "DeepBlueCLI"
         # URLs
-        $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI.git"
+        $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
         $AppCURLBackup = ""
     
     # VARIABLES - Status notifications
@@ -183,7 +183,7 @@ $ParentFolder = "Threat Hunters Collection"
     |  [export] | Export Raw Log                      |
     |  [help]   | Remind Me Where Sysmon is Stored    |
     |  [back]   | Back to Main Menu                   |
-    |_________________________________________________|`n
+    |_________________________________________________|`n `n
 "@
 
 #DBCLI Quick and easy variables for user to input instead of copy/pasting
@@ -270,7 +270,7 @@ function StartDBCLI {
    
     # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
     Write-Host $StatusCDownloadApp
-    Invoke-WebRequest 'https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip' -OutFile .\$AppCName.zip
+    Invoke-WebRequest $AppCURL -OutFile .\$AppCName.zip
     
     
     $StatusCExtractedApp
@@ -292,7 +292,7 @@ function StartDBCLI {
             do
             {
                 # Show-Menu <- this is a function, commented out fo rnow
-                $selection = Read-Host $BannerC $AppCCommands
+                $selection = Read-Host $BannerC $AppCCommands "Waiting for your input"
                 switch ($selection)
                 {
                     'List' {
