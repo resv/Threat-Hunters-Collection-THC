@@ -160,19 +160,21 @@ $ParentFolder = "Threat Hunters Collection"
         $AppCURLBackup = ""
     
     # VARIABLES - Status notifications
-    $StatusCCreatedAppCFolder = "> [ Adding new directories Desktop > `"$ParentFolder`" > `"$AppCFolder`" ]`n"
-    $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to `"$AppCFolder`" ]`n"
+    $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
+    $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to (..\$AppCFolder) ]`n"
     $StatusCDownloadApp = ">>> [ Downloading `"$AppCName`" ]`n"
     $StatusCExtractedApp = ">>>> [ Extracted `"$AppCName`" ]`n"
     $StatusCRemoveDownload =  ">>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
-    $StatusCChangedDirToAppFolder = ">>>>>> [ You are in the `"$AppCFolder`" directory ]`n"
+    $StatusCChangedDirToAppFolder = ">>>>>> [ You are in the (..\Desktop\$ParentFolder\$AppCFolder) directory ]`n"
     $StatusCReady = ">>>>>>> [ Ready for Hunting... ]`n"
     $StatusCLoading = ">>>>>>>> [ Retrieving Data... ]`n"
-    $StatusCExportComplete = "`n >>>>>>>>>>> [ Exported to THC Directory ] <<<<<<<<<<<`n"
- 
+    $StatusCCreatedAppCLogFolder = "`n>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
+    $StatusCExportComplete = "`n>>>>>>>> [ Exported Raw Logs to (Desktop\$ParentFolder\$Hostname-Evtx-Logs) ]`n"
+    
+
     $AppCCommands = @"
-     _________________________________________________
-    |           [ DeepBlueCLI Quick Commands ]        |
+    `n
+     ___________[ DeepBlueCLI Quick Commands ]________
     |                                                 |
     | *[list]   | Format-List                         |
     | *[table]  | Format-Table                        |
@@ -180,11 +182,16 @@ $ParentFolder = "Threat Hunters Collection"
     |  [html]   | ConvertTo-Html                      |
     |  [json]   | ConvertTo-Json                      |
     |  [xml]    | ConvertTo-Xml                       |
-    |  [export] | Export Raw Log                      |
-    |  [help]   | Remind Me Where Sysmon is Stored    |
+    |  [export] | Export Raw Logs                     |
+    |  [all]    | Filters all logs with record < 1    | 
+    |  [help]   | Get Syntax & Paths                  |
     |  [back]   | Back to Main Menu                   |
     |_________________________________________________|`n `n
+(NEW MENU NEEDED: Hunting: Security, System, Application, AppLocker, PowerShell, Sysmon, WMI)
+    `n `n
 "@
+#DBCLI Gets Record Count and displays it for user to get an idea of load times for queries
+    $DBCLIRecords = "get-winevent -listlog Security, System, Application, `"Windows PowerShell`", Microsoft-Windows-Sysmon/Operational | Select-Object RecordCount,LogName"
 
 #DBCLI Quick and easy variables for user to input instead of copy/pasting
     $DBCLIList = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List"
@@ -193,12 +200,31 @@ $ParentFolder = "Threat Hunters Collection"
     $DBCLIHtml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html"
     $DBCLIJson = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json"
     $DBCLIXml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml"
-    $DBCLIExport = "Copy-Item -Path C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx -Destination $(`"$env:userprofile`")\Desktop\`"$ParentFolder`""
     $DBCLIHelp = @"
-    [  <Script> ----- <Sysmon Location> ------------------------------------------------------- | <Switch> -- ]
-      [ .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List ] `n
+
+ __________________________________________________[ SYNTAX ]__________________________________________________
+|                                                                                                              |
+| [  <Script> ----- <Sysmon Location> ------------------------------------------------------- | <Switch> -- ]  |
+| [ .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List ]  |
+|______________________________________________________________________________________________________________|
+
+         _______________________________________[ HOST LOG PATHS ]______________________________________ 
+        |                                                                                               |
+        |  [Security] C:\Windows\System32\winevt\Logs\Security.evtx                                     |
+        |  [System] C:\Windows\System32\winevt\Logs\System.evtx                                         |
+        |  [Application] C:\Windows\System32\winevt\Logs\Application.evtx                               |
+        |  [AppLocker] C:\Windows\System32\winevt\Logs\Microsoft-Windows-AppLocker%4EXE and DLL.evtx    |
+        |  [PowerShell] C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx  |
+        |  [Sysmon] C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx          |
+        |  [WMI] C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx       |
+        |_______________________________________________________________________________________________|
+
+         ____________________________________[ EXPORTED LOG PATHS ]_____________________________________ 
+        |                                                                                               |
+        |  [Exported Logs] Desktop\Threat Hunters Collection\"Hostname"-Evtx-Logs                       |
+        |_______________________________________________________________________________________________|
+`n
 "@
-    $DBCLIBack = ""
 
 # VARIABLES - AppD (Autoruns)
     $AppDName = "Autoruns"
@@ -237,13 +263,47 @@ $Banner
  [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
+function ExportEvtxLogs {
+    # clear
+    clear
+
+    # Welcome BannerAppC
+    Write-Host $BannerC
+
+    # Export and notify directory
+    $null = new-item -path "$($env:userprofile)\Desktop\$ParentFolder" -name "$Hostname-Evtx-Logs" -itemtype directory -Force
+    Write-Host $StatusCCreatedAppCLogFolder
+    
+    Write-Host "[ Exporting Security ]"
+    Copy-Item -Path C:\Windows\System32\winevt\Logs\Security.evtx -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host "[ Exporting System ]"
+    Copy-Item -Path C:\Windows\System32\winevt\Logs\System.evtx -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host "[ Exporting Application ]"
+    Copy-Item -Path C:\Windows\System32\winevt\Logs\Application.evtx -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host "[ Exporting AppLocker EXE & DLL ]"
+    Copy-Item -Path "C:\Windows\System32\winevt\Logs\Microsoft-Windows-AppLocker%4EXE and DLL.evtx" -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host "[ Exporting PowerShell ]"
+    Copy-Item -Path C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host "[ Exporting Sysmon Log ]"
+    Copy-Item -Path C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host "[ Exporting WMI Log ]"
+    Copy-Item -Path C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx -Destination "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+
+    Write-Host $StatusCExportComplete
+}
 
 function StartDBCLI {   
     #Clear
     clear
 
     # Welcome BannerAppC
-    Write-Host $BannerC
+    Write-Host `n`n`n`n`n`n
 
     #DBCLI
     #------- Some Stats -------
@@ -288,43 +348,45 @@ function StartDBCLI {
 
         if ($HealthCheck -eq "True") 
         {   
-            Write-Host $StatusCReady
+            #place holder for another command
             do
             {
-                # Show-Menu <- this is a function, commented out fo rnow
-                $selection = Read-Host $BannerC $AppCCommands "Waiting for your input"
+                # Show-Menu <- this is a function, commented out for now
+                $selection = Read-Host $StatusCReady $BannerC $AppCCommands "Waiting for your input"
                 switch ($selection)
                 {
                     'List' {
-                    Write-Host = $StatusCLoading
+                    Write-Host $StatusCLoading
                     Invoke-expression $DBCLIList
                     } 
                     'Table' {
-                    Write-Host = $StatusCLoading
+                    Write-Host $StatusCLoading
                     Invoke-expression $DBCLITable
                     } 
                     'Grid' {
-                    Write-Host = $StatusCLoading
+                    Write-Host $StatusCLoading
                     Invoke-expression $DBCLIGrid
                     } 
                     'HTML' {
-                    Write-Host = $StatusCLoading
+                    Write-Host $StatusCLoading
                     Invoke-expression $DBCLIHtml
                     } 
                     'JSON' {
-                    Write-Host = $StatusCLoading
+                    Write-Host $StatusCLoading
                     Invoke-expression $DBCLIJson
                     } 
                     'XML' {
-                    Write-Host = $StatusCLoading
+                    Write-Host $StatusCLoading
                     Invoke-expression $DBCLIXml
                     }
                     'export' {
-                    Invoke-expression $DBCLIExport
-                    Write-Host = $StatusCExportComplete
+                    Write-Host $StatusCLoading
+                    ExportEvtxLogs                   
                     }
                     'help' {
-                    Write-Host = $DBCLIHelp                    
+                    Clear-Host
+                    Write-Host $BannerC
+                    Write-Host $DBCLIHelp                    
                     }
                     'Exit' {
                     # Invoke DBCLI Variable to close
@@ -344,7 +406,6 @@ function StartDBCLI {
             Write-Host "Intialization process has failed..."
         }
 }
-
 
 # Execution starts here:
 # -------------------------------------------------------------------
