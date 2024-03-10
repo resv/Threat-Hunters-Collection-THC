@@ -296,81 +296,47 @@ $Banner
  [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
-#DBCLI Gets Record Count and displays it for user to get an idea of load times for queries
+#DBCLI Gets Record Count and displays it for user to get an idea of processing times for queries
 function DBCLIRecords {
     Write-Host $BannerC
     Invoke-expression "get-winevent -listlog Security,System,Application,`"Microsoft-Windows-AppLocker/EXE and DLL`",`"Windows PowerShell`",`"Microsoft-Windows-Sysmon/Operational`",`"Microsoft-Windows-WMI-Activity/Operational`" | Select-Object RecordCount,LogName"
     Write-Host "`n"
     }
 
-function ExportEvtxLogs {
-    # clear
+function ExportLog($LogType){
+    # Clear
     clear
 
     # Welcome BannerAppC
     Write-Host $BannerC
 
-    # Create directory and notify user of path
+    # Create export log directory and notify path
     function global:CreateLogFolder{
         $null = new-item -path "$($env:userprofile)\Desktop\$ParentFolder" -name "$Hostname-Evtx-Logs" -itemtype directory -Force
         Write-Host $StatusCCreatedAppCLogFolder
         }
     CreateLogFolder
 
-    # Export Security Log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxSecurityLog{
-        Write-Host ">>>>>>>>> [ Exporting Security Log ]"
-        Copy-Item -Path $LogPathSecurity -Destination "$LogPathExportFolder"
-        }
-    ExportEvtxSecurityLog
+    # Notify export status
+    Write-Host ">>>>>>>>> [ Exporting Security Log ]"
 
-    # Export System Log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxSystemLog{
-        Write-Host ">>>>>>>>>> [ Exporting System Log ]"
-        Copy-Item -Path $LogPathSystem -Destination "$LogPathExportFolder"
-        }
-    ExportEvtxSystemLog
-
-    # Export Application Log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxApplicationLog{
-        Write-Host ">>>>>>>>>>> [ Exporting Application Log ]"
-        Copy-Item -Path $LogPathApplication -Destination "$LogPathExportFolder"
+    switch ($LogType){
+        'Security' {Copy-Item -Path $LogPathSecurity -Destination "$LogPathExportFolder"}
+        'System' {Copy-Item -Path $LogPathSystem -Destination "$LogPathExportFolder"}
+        'Application' {Copy-Item -Path $LogPathApplication -Destination "$LogPathExportFolder"}
+        'AppLocker' {Copy-Item -Path $LogPathAppLocker -Destination "$LogPathExportFolder"}
+        'PowerShell' {Copy-Item -Path $LogPathPowerShell -Destination "$LogPathExportFolder"}
+        'Sysmon' {Copy-Item -Path $LogPathSysmon -Destination "$LogPathExportFolder"}
+        'WMI' {Copy-Item -Path $LogPathWMI -Destination "$LogPathExportFolder"}
     }
-    ExportEvtxApplicationLog
-
-    # Export AppLocker log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxAppLockerLog{
-        Write-Host ">>>>>>>>>>>> [ Exporting AppLocker EXE & DLL Log ]"
-        Copy-Item -Path $LogPathAppLocker -Destination "$LogPathExportFolder"
-    }
-    ExportEvtxAppLockerLog
-    
-    # Export PowerShell Log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxPowerShellLog{
-        Write-Host ">>>>>>>>>>>>> [ Exporting PowerShell Log ]"
-        Copy-Item -Path $LogPathPowerShell -Destination "$LogPathExportFolder"
-    }
-    ExportEvtxPowerShellLog
-
-    # Export Sysmon Log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxSysmonLog{
-        Write-Host ">>>>>>>>>>>>>> [ Exporting Sysmon Log ]"
-        Copy-Item -Path $LogPathSysmon -Destination "$LogPathExportFolder"
-    }
-    ExportEvtxSysmonLog
-
-    # Export WMI Log & Call it (This function is reused individually elsewhere)
-    function global:ExportEvtxWMILog{
-        Write-Host ">>>>>>>>>>>>>>> [ Exporting WMI Log ]"
-        Copy-Item -Path $LogPathWMI -Destination "$LogPathExportFolder"
-        }
-    ExportEvtxWMILog
 
     function global:StatusCReportExportComplete{
         Write-Host $StatusCExportComplete
         }
     StatusCReportExportComplete
 }
+
+
 
 # AppC (DBCLI) Main Menu
 function DBCLIMenuMain{
@@ -420,8 +386,7 @@ function DBCLIMenuMain{
                         }
                     'Export' {
                         Write-Host $StatusCLoading
-                        ExportEvtxSysmonLog
-                        StatusCReportExportComplete
+                        ExportLog("Security")
                         }
                     'Help' {
                         Clear-Host
