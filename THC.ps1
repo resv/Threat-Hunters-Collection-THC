@@ -179,12 +179,12 @@ $ParentFolder = "Threat Hunters Collection"
     $LogPathPowerShell = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx"
     $LogPathSysmon = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
     $LogPathWMI = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx"
-    $PipeList = "| Format-List"
-    $PipeTable = "| Format-Table"
-    $PipeGrid = "| Out-GridView"
-    $PipeHtml = "| ConvertTo-Html"
-    $PipeJson = "| ConvertTo-Json"
-    $PipeXml = "| ConvertTo-Xml"
+    $PipeList = "|Format-List"
+    $PipeTable = "|Format-Table"
+    $PipeGrid = "|Out-GridView"
+    $PipeHtml = "|ConvertTo-Html"
+    $PipeJson = "|ConvertTo-Json"
+    $PipeXml = "|ConvertTo-Xml"
 
     # AppCMenuSub
     $AppCMenuSub = @"
@@ -296,13 +296,14 @@ $Banner
  [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
-#DBCLI Gets Record Count and displays it for user to get an idea of processing times for queries
+# Gets Record Count and displays it for user to get an idea of processing times for queries
 function DBCLIRecords {
     Write-Host $BannerC
     Invoke-expression "get-winevent -listlog Security,System,Application,`"Microsoft-Windows-AppLocker/EXE and DLL`",`"Windows PowerShell`",`"Microsoft-Windows-Sysmon/Operational`",`"Microsoft-Windows-WMI-Activity/Operational`" | Select-Object RecordCount,LogName"
     Write-Host "`n"
     }
 
+# Export DeepBlue logs will use this switchcase
 function ExportLog($LogType){
     # Clear
     clear
@@ -338,6 +339,19 @@ function ExportLog($LogType){
     StatusCReportExportComplete
 }
 
+function RunDeepBlue{
+    # Clear
+    clear
+
+    # Welcome BannerAppC
+    Write-Host $BannerC
+    
+    # Notify the query is running
+    Write-Host $StatusCLoading
+    
+    # Run DeepBlue explicit request
+    Invoke-expression ".\DeepBlue.ps1 $LogType $LogFormat"
+}
 
 
 # AppC (DBCLI) Main Menu
@@ -359,32 +373,33 @@ function DBCLIMenuMain{
                     } 
                 'Security' {
                 $global:LogTarget = "Security"
+                $global:LogType = $LogPathSecurity
                 $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
                 switch ($selection2)
                 {
                     'List' {
-                        Write-Host $StatusCLoading
-                        Invoke-expression $DBCLISecurityLogList
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
                         } 
-                    'Table' {
-                        Write-Host $StatusCLoading
-                        Invoke-expression $DBCLISecurityLogTable
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
                         }
                     'Grid' {
-                        Write-Host $StatusCLoading
-                        Invoke-expression $DBCLISecurityLogGrid
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlue
                         } 
                     'Html' {
-                        Write-Host $StatusCLoading
-                        Invoke-expression $DBCLISecurityLogHTML
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlue
                         } 
                     'Json' {
-                        Write-Host $StatusCLoading
-                        Invoke-expression $DBCLISecurityLogJson
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlue
                         } 
                     'Xml' {
-                        Write-Host $StatusCLoading
-                        Invoke-expression $DBCLISecurityLogXml
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlue
                         }
                     'Export' {
                         Write-Host $StatusCLoading
