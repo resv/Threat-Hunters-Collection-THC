@@ -318,8 +318,10 @@ function ExportLog($LogType){
     CreateLogFolder
 
     # Notify export status
-    Write-Host ">>>>>>>>> [ Exporting Security Log ]"
-
+    foreach ($Type in $LogType){
+        Write-Host ">>>>>>>>> [ Exporting $Type Log ]"
+    }
+    
     switch ($LogType){
         'Security' {Copy-Item -Path $LogPathSecurity -Destination "$LogPathExportFolder"}
         'System' {Copy-Item -Path $LogPathSystem -Destination "$LogPathExportFolder"}
@@ -425,7 +427,7 @@ function DBCLIMenuMain{
                 }
                 'Export' {
                 Write-Host $StatusCLoading
-                ExportEvtxLogs                   
+                ExportLog("Security","System","Application","AppLocker","PowerShell","Sysmon","WMI")                 
                 }
                 'help' {
                 Clear-Host
