@@ -186,6 +186,8 @@ $ParentFolder = "Threat Hunters Collection"
     $PipeJson = "|ConvertTo-Json"
     $PipeXml = "|ConvertTo-Xml"
 
+    
+
     # AppCMenuSub
     $AppCMenuSub = @"
     `n
@@ -209,8 +211,8 @@ $ParentFolder = "Threat Hunters Collection"
      ____[ DEEP BLUE CLI MAIN MENU ]____
     |                                   |
     | [Records]     | Total Event Count |
-    | [Security]    | DeepBlue Query    |
-    | [System]      | DeepBlue Query    |
+    | [Security]    | $LogCountSecurity Records
+    | [System]      | $LogCountSystem Records
     | [Application] | DeepBlue Query    |
     | [AppLocker]   | DeepBlue Query    |
     | [Powershell]  | DeepBlue Query    |
@@ -302,6 +304,11 @@ function DBCLIRecords {
     Write-Host "`n"
     }
 
+    function DBCLIRecords1 {
+        $global:LogCountSecurity = Invoke-expression "get-winevent -listlog Security | Select-Object -ExpandProperty RecordCount"
+        $global:LogCountSystem = Invoke-expression "get-winevent -listlog System | Select-Object -ExpandProperty RecordCount"
+    }
+
 # Exporting DeepBlue logs will use this switchcase
 function ExportLog($LogType){
     # Clear
@@ -346,8 +353,11 @@ function RunDeepBlue{
     # Welcome BannerAppC
     Write-Host $BannerC
     
+    # Store record count into a variable to reuse on the Notify below
+    $RecordCount = Invoke-expression "get-winevent -listlog $LogTarget | Select-Object -ExpandProperty RecordCount"
+
     # Notify the query is running
-    Write-Host $StatusCLoading
+    Write-Host ">>>>>>>> [ Hunting Through $RecordCount $LogTarget Records ]"
     
     # Store DeepBlue explicit request so we can check use this to check for blank results with the if statement
     $output = Invoke-expression ".\DeepBlue.ps1 $LogType $LogFormat"
@@ -368,8 +378,8 @@ function DBCLIMenuMain{
         #place holder for another command
         do
         {
-            # Placeholder for another command
-            
+            # Executes function to grab record count to populate AppCMenuMain
+            DBCLIRecords1
             # MainMenu for DBCLI, not case sensitive, will take alphanumeric inputs
             $selection = Read-Host $StatusCReady $BannerC $AppCMenuMain "Waiting for your input"
             switch ($selection)
@@ -386,15 +396,15 @@ function DBCLIMenuMain{
                     {
                         'List' {
                             $global:LogFormat = $PipeList
-                            RunDeepBlueTest
+                            RunDeepBlue
                             } 
                         'table' {
                             $global:LogFormat = $PipeTable
-                            RunDeepBlueTest
+                            RunDeepBlue
                             }
                         'Grid' {
                             $global:LogFormat = $PipeGrid
-                            RunDeepBlueTest
+                            RunDeepBlue
                             } 
                         'Html' {
                             $global:LogFormat = $PipeHtml
@@ -431,11 +441,11 @@ function DBCLIMenuMain{
                     {
                         'List' {
                             $global:LogFormat = $PipeList
-                            RunDeepBlueTest
+                            RunDeepBlue
                             } 
                         'table' {
                             $global:LogFormat = $PipeTable
-                            RunDeepBlueTest
+                            RunDeepBlue
                             }
                         'Grid' {
                             $global:LogFormat = $PipeGrid
