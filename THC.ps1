@@ -173,7 +173,7 @@ $ParentFolder = "Threat Hunters Collection"
     $DeepBlueExecute = ".\DeepBlue.ps1"
     $LogPathExportFolder = "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
     $LogPathSecurity = "C:\Windows\System32\winevt\Logs\Security.evtx"
-    $LogPathSystem = "C:\Windows\System32\winevt\Logs\System.evtx "
+    $LogPathSystem = "C:\Windows\System32\winevt\Logs\System.evtx"
     $LogPathApplication = "C:\Windows\System32\winevt\Logs\Application.evtx"
     $LogPathAppLocker = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-AppLocker%4EXE and DLL.evtx"
     $LogPathPowerShell = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx"
@@ -189,7 +189,7 @@ $ParentFolder = "Threat Hunters Collection"
     # AppCMenuSub
     $AppCMenuSub = @"
     `n
-          $global:LogTarget Log Sub-Menu
+              $global:LogTarget Log Sub-Menu
      ________[ Quick Commands ]________
     |                                  |
     | *[List]   | Format-List view     |
@@ -210,7 +210,6 @@ $ParentFolder = "Threat Hunters Collection"
     |                                   |
     | [Records]     | Total Event Count |
     | [Security]    | DeepBlue Query    |
-    | [Application] | DeepBlue Query    |
     | [System]      | DeepBlue Query    |
     | [Application] | DeepBlue Query    |
     | [AppLocker]   | DeepBlue Query    |
@@ -303,7 +302,7 @@ function DBCLIRecords {
     Write-Host "`n"
     }
 
-# Export DeepBlue logs will use this switchcase
+# Exporting DeepBlue logs will use this switchcase
 function ExportLog($LogType){
     # Clear
     clear
@@ -332,13 +331,14 @@ function ExportLog($LogType){
         'Sysmon' {Copy-Item -Path $LogPathSysmon -Destination "$LogPathExportFolder"}
         'WMI' {Copy-Item -Path $LogPathWMI -Destination "$LogPathExportFolder"}
     }
-
+    # Notify user that the export is complete
     function global:StatusCReportExportComplete{
         Write-Host $StatusCExportComplete
         }
     StatusCReportExportComplete
 }
 
+# DeepBlue Function is called from the DBCLI Submenu grabbing the logtype and logformat requested by the user
 function RunDeepBlue{
     # Clear
     clear
@@ -349,10 +349,17 @@ function RunDeepBlue{
     # Notify the query is running
     Write-Host $StatusCLoading
     
-    # Run DeepBlue explicit request
-    Invoke-expression ".\DeepBlue.ps1 $LogType $LogFormat"
-}
+    # Store DeepBlue explicit request so we can check use this to check for blank results with the if statement
+    $output = Invoke-expression ".\DeepBlue.ps1 $LogType $LogFormat"
 
+    # Check if the results are is empty and notify user if so.
+    if (-not $output) {
+    Write-Host "`n>>>>>>>>> [ No Flagged Results... ]`n`n"
+    } else {
+    # Output the table or do whatever you need with the results
+    $output
+    }
+}
 
 # AppC (DBCLI) Main Menu
 function DBCLIMenuMain{
@@ -370,55 +377,96 @@ function DBCLIMenuMain{
                 'Records' {
                     Write-Host $StatusCLoading
                     DBCLIRecords
-                    } 
+                } 
                 'Security' {
-                $global:LogTarget = "Security"
-                $global:LogType = $LogPathSecurity
-                $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
-                switch ($selection2)
-                {
-                    'List' {
-                        $global:LogFormat = $PipeList
-                        RunDeepBlue
-                        } 
-                    'table' {
-                        $global:LogFormat = $PipeTable
-                        RunDeepBlue
-                        }
-                    'Grid' {
-                        $global:LogFormat = $PipeGrid
-                        RunDeepBlue
-                        } 
-                    'Html' {
-                        $global:LogFormat = $PipeHtml
-                        RunDeepBlue
-                        } 
-                    'Json' {
-                        $global:LogFormat = $PipeJson
-                        RunDeepBlue
-                        } 
-                    'Xml' {
-                        $global:LogFormat = $PipeXml
-                        RunDeepBlue
-                        }
-                    'Export' {
-                        Write-Host $StatusCLoading
-                        ExportLog("Security")
-                        }
-                    'Help' {
-                        Clear-Host
-                        Write-Host $BannerC
-                        Write-Host $DBCLIHelp      
-                        }        
-                    'Back' {
-                        AppCMenuMain
-                        } 
-                }
-                pause
+                    $global:LogTarget = "Security"
+                    $global:LogType = $LogPathSecurity
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlueTest
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlueTest
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlueTest
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("Security")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
                 } 
                 'System' {
-                Write-Host $StatusCLoading
-                Invoke-expression $DBCLITable
+                    $global:LogTarget = "System"
+                    $global:LogType = $LogPathSystem
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlueTest
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlueTest
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlue
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("System")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
                 } 
                 'Application' {
                 Write-Host $StatusCLoading
