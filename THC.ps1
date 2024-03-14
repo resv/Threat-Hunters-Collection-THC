@@ -210,14 +210,13 @@ $ParentFolder = "Threat Hunters Collection"
     `n
      ____[ DEEP BLUE CLI MAIN MENU ]____
     |                                   |
-    | [Records]     | Total Event Count |
     | [Security]    | $LogCountSecurity Records
     | [System]      | $LogCountSystem Records
-    | [Application] | DeepBlue Query    |
-    | [AppLocker]   | DeepBlue Query    |
-    | [Powershell]  | DeepBlue Query    |
-    | [Sysmon]      | DeepBlue Query    |
-    | [WMI]         | DeepBlue Query    |
+    | [Application] | $LogCountApplication Records
+    | [AppLocker]   | $LogCountAppLocker Records
+    | [Powershell]  | $LogCountPowerShell Records
+    | [Sysmon]      | $LogCountSysmon Records
+    | [WMI]         | $LogCountWMI Records
     | [All]         | Filters all logs  |
     | [Export]      | Export all logs   |
     | [Help]        | Syntax & Paths    |
@@ -297,17 +296,16 @@ $Banner
  [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
-# Gets Record Count and displays it for user to get an idea of processing times for queries
-function DBCLIRecords {
-    Write-Host $BannerC
-    Invoke-expression "get-winevent -listlog Security,System,Application,`"Microsoft-Windows-AppLocker/EXE and DLL`",`"Windows PowerShell`",`"Microsoft-Windows-Sysmon/Operational`",`"Microsoft-Windows-WMI-Activity/Operational`" | Select-Object RecordCount,LogName"
-    Write-Host "`n"
-    }
-
-    function DBCLIRecords1 {
-        $global:LogCountSecurity = Invoke-expression "get-winevent -listlog Security | Select-Object -ExpandProperty RecordCount"
-        $global:LogCountSystem = Invoke-expression "get-winevent -listlog System | Select-Object -ExpandProperty RecordCount"
-    }
+# Stores Record Count in variable to use and display on the AppC Menu Main
+function RunRecordCount {
+    $global:LogCountSecurity = Invoke-expression "get-winevent -listlog Security | Select-Object -ExpandProperty RecordCount"
+    $global:LogCountSystem = Invoke-expression "get-winevent -listlog System | Select-Object -ExpandProperty RecordCount"
+    $global:LogCountApplication = Invoke-expression "get-winevent -listlog Application | Select-Object -ExpandProperty RecordCount"
+    $global:LogCountAppLocker = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-AppLocker/EXE and DLL`" | Select-Object -ExpandProperty RecordCount"
+    $global:LogCountPowerShell = Invoke-expression "get-winevent -listlog `"Windows PowerShell`" | Select-Object -ExpandProperty RecordCount"
+    $global:LogCountSysmon = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-Sysmon/Operational`" | Select-Object -ExpandProperty RecordCount"
+    $global:LogCountWMI = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-WMI-Activity/Operational`" | Select-Object -ExpandProperty RecordCount"
+}
 
 # Exporting DeepBlue logs will use this switchcase
 function ExportLog($LogType){
@@ -353,11 +351,19 @@ function RunDeepBlue{
     # Welcome BannerAppC
     Write-Host $BannerC
     
-    # Store record count into a variable to reuse on the Notify below
-    $RecordCount = Invoke-expression "get-winevent -listlog $LogTarget | Select-Object -ExpandProperty RecordCount"
+    # Switch reading what the LogTarget is then getting the explicit LogCount
+    switch ($LogTarget) {
+        "Security"     { $LogCount = $LogCountSecurity }
+        "System"       { $LogCount = $LogCountSystem }
+        "Application"  { $LogCount = $LogCountApplication }
+        "AppLocker"    { $LogCount = $LogCountApplocker }
+        "PowerShell"   { $LogCount = $LogCountPowerShell }
+        "Sysmon"       { $LogCount = $LogCountSysmon }
+        "WMI"          { $LogCount = $LogCountWMI }
+    }
 
     # Notify the query is running
-    Write-Host ">>>>>>>> [ Hunting Through $RecordCount $LogTarget Records ]"
+    Write-Host ">>>>>>>> [ Hunting Through $LogCount $LogTarget Records ]"
     
     # Store DeepBlue explicit request so we can check use this to check for blank results with the if statement
     $output = Invoke-expression ".\DeepBlue.ps1 $LogType $LogFormat"
@@ -379,12 +385,12 @@ function DBCLIMenuMain{
         do
         {
             # Executes function to grab record count to populate AppCMenuMain
-            DBCLIRecords1
+            RunRecordCount
             # MainMenu for DBCLI, not case sensitive, will take alphanumeric inputs
             $selection = Read-Host $StatusCReady $BannerC $AppCMenuMain "Waiting for your input"
             switch ($selection)
             {
-                'Records' {
+                'XX DEPRECATED XX' {
                     Write-Host $StatusCLoading
                     DBCLIRecords
                 } 
@@ -479,25 +485,230 @@ function DBCLIMenuMain{
                     pause
                 } 
                 'Application' {
-                Write-Host $StatusCLoading
-                Invoke-expression $DBCLIGrid
+                    $global:LogTarget = "Application"
+                    $global:LogType = $LogPathApplication
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlue
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlue
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlue
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("Application")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
                 } 
                 'AppLocker' {
-                Write-Host $StatusCLoading
-                Invoke-expression $DBCLIHtml
+                    $global:LogTarget = "AppLocker"
+                    $global:LogType = $LogPathAppLocker
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlue
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlue
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlue
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("AppLocker")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
                 } 
                 'PowerShell' {
-                Write-Host $StatusCLoading
-                Invoke-expression $DBCLIJson
+                    $global:LogTarget = "PowerShell"
+                    $global:LogType = $LogPathPowerShell
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlue
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlue
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlue
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("PowerShell")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
                 } 
                 'Sysmon' {
-                Write-Host $StatusCLoading
-                Invoke-expression $DBCLIXml
-                }
+                    $global:LogTarget = "Sysmon"
+                    $global:LogType = $LogPathSysmon
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlue
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlue
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlue
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("Sysmon")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
+                } 
                 'WMI' {
-                Write-Host $StatusCLoading
-                ExportEvtxLogs                   
-                }
+                    $global:LogTarget = "WMI"
+                    $global:LogType = $LogPathWMI
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    switch ($selection2)
+                    {
+                        'List' {
+                            $global:LogFormat = $PipeList
+                            RunDeepBlue
+                            } 
+                        'table' {
+                            $global:LogFormat = $PipeTable
+                            RunDeepBlue
+                            }
+                        'Grid' {
+                            $global:LogFormat = $PipeGrid
+                            RunDeepBlue
+                            } 
+                        'Html' {
+                            $global:LogFormat = $PipeHtml
+                            RunDeepBlue
+                            } 
+                        'Json' {
+                            $global:LogFormat = $PipeJson
+                            RunDeepBlue
+                            } 
+                        'Xml' {
+                            $global:LogFormat = $PipeXml
+                            RunDeepBlue
+                            }
+                        'Export' {
+                            Write-Host $StatusCLoading
+                            ExportLog("WMI")
+                            }
+                        'Help' {
+                            Clear-Host
+                            Write-Host $BannerC
+                            Write-Host $DBCLIHelp      
+                            }        
+                        'Back' {
+                            AppCMenuMain
+                            } 
+                    }
+                    pause
+                } 
                 'Export' {
                 Write-Host $StatusCLoading
                 ExportLog("Security","System","Application","AppLocker","PowerShell","Sysmon","WMI")                 
