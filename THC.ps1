@@ -96,7 +96,7 @@ $ParentFolder = "Threat Hunters Collection"
     $AppAName = "Host Info"
     $AppAdescription = "Get Host information"
     $Hostname = hostname
-    $Profile = $env:userprofile
+    $UserProfilePath = $($env:userprofile)
     $PrintWorkingDirectory = Get-Location
         #Grab IP info
         $IPAddress = $env:HostIP = (
@@ -121,7 +121,7 @@ $ParentFolder = "Threat Hunters Collection"
 
         # Notify hostname & IP address
         Write-Host "[Hostname]:" $Hostname
-        Write-Host "[Profile]:" $Profile
+        Write-Host "[Profile]:" $UserProfilePath
         Write-Host "[IP Address ]:" $IPAddress
         
         # Notify working directory
@@ -162,16 +162,19 @@ $ParentFolder = "Threat Hunters Collection"
     # VARIABLES - Status notifications
     $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
     $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to (..\$AppCFolder) ]`n"
-    $StatusCDownloadApp = ">>> [ Downloading `"$AppCName`" ]`n"
-    $StatusCExtractedApp = ">>>> [ Extracted `"$AppCName`" ]`n"
-    $StatusCRemoveDownload =  ">>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
-    $StatusCChangedDirToAppFolder = ">>>>>> [ You are in the (..\Desktop\$ParentFolder\$AppCFolder) directory ]`n"
-    $StatusCReady = ">>>>>>> [ Ready for Hunting... ]`n"
-    $StatusCLoading = ">>>>>>>> [ Retrieving Data... ]`n"
+    $StatusCCheckAndRemoveExisting = ">>> [ Removing any existing DeepBlue files ]`n"
+    $StatusCDownloadApp = ">>>> [ Downloading `"$AppCName`" ]`n"
+    $StatusCExtractedApp = ">>>>> [ Extracted `"$AppCName`" ]`n"
+    $StatusCRemoveDownload =  ">>>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
+    $StatusCChangedDirToAppFolder = ">>>>>>> [ You are in the (..\Desktop\$ParentFolder\$AppCFolder) directory ]`n"
+    $StatusCReady = ">>>>>>>> [ Ready for Hunting... ]`n"
+    $StatusCLoading = ">>>>>>>>> [ Retrieving Data... ]`n"
     $StatusCCreatedAppCLogFolder = "`n>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
+    $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories ..\Desktop\$ParentFolder\Import-Log-Folder ]`n"
     $StatusCExportComplete = "`n>>>>>>>>>> [ Exported Raw Logs to (Desktop\$ParentFolder\$Hostname-Evtx-Logs) ]`n"
     $DeepBlueExecute = ".\DeepBlue.ps1"
-    $LogPathExportFolder = "$($env:userprofile)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+    $LogPathExportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
+    $LogPathImportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder"
     $LogPathSecurity = "C:\Windows\System32\winevt\Logs\Security.evtx"
     $LogPathSystem = "C:\Windows\System32\winevt\Logs\System.evtx"
     $LogPathApplication = "C:\Windows\System32\winevt\Logs\Application.evtx"
@@ -179,6 +182,13 @@ $ParentFolder = "Threat Hunters Collection"
     $LogPathPowerShell = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx"
     $LogPathSysmon = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
     $LogPathWMI = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx"
+    $LogPathImportSecurity = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Security.evtx"
+    $LogPathImportSystem = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\System.evtx"
+    $LogPathImportApplication = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Application.evtx"
+    $LogPathImportAppLocker = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-AppLocker%4EXE and DLL.evtx"
+    $LogPathImportPowerShell = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-PowerShell%4Operational.evtx"
+    $LogPathImportSysmon = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx"
+    $LogPathImportWMI = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-WMI-Activity%4Operational.evtx"
     $PipeList = "|Format-List"
     $PipeTable = "|Format-Table"
     $PipeGrid = "|Out-GridView"
@@ -186,13 +196,45 @@ $ParentFolder = "Threat Hunters Collection"
     $PipeJson = "|ConvertTo-Json"
     $PipeXml = "|ConvertTo-Xml"
 
-    
+    # AppCMenuImport
+    $AppCMenuImportSub = @"
+    `n
+       $LogCount $global:LogTarget Log  Sub-Menu
+     _______[ IMPORT SUB MENU ]________
+    |                                  |
+    | *[List]   | Format-List view     |
+    | *[Table]  | Format-Table view    |
+    | *[Grid]   | Out-GridView view    |
+    |  [HTML]   | ConvertTo-Html view  |
+    |  [JSON]   | ConvertTo-Json view  |
+    |  [XML]    | ConvertTo-Xml view   |
+    |  [Back]   | Back to Main Menu    |
+    |__________________________________|`n `n
+"@    
+
+    # AppCMenuMain
+    $AppCMenuImportMain = @"
+    `n
+     _______[ IMPORT MAIN MENU ]________
+    |                                   |
+    | [Security]    |  Records
+    | [System]      |  Records
+    | [Application] |  Records
+    | [AppLocker]   |  Records
+    | [Powershell]  |  Records
+    | [Sysmon]      |  Records
+    | [WMI]         |  Records
+    | [All]         | Filters all logs  |
+    | [Help]        | Syntax & Paths    |
+    | [Back]        | Back to Main Menu |
+    |___________________________________|`n `n
+"@
 
     # AppCMenuSub
     $AppCMenuSub = @"
     `n
-              $global:LogTarget Log Sub-Menu
-     ________[ Quick Commands ]________
+       $LogCount $global:LogTarget Log Sub-Menu
+     ______[ DEEP BLUE SUB MENU ]______
     |                                  |
     | *[List]   | Format-List view     |
     | *[Table]  | Format-Table view    |
@@ -208,7 +250,7 @@ $ParentFolder = "Threat Hunters Collection"
     # AppCMenuMain
     $AppCMenuMain = @"
     `n
-     ____[ DEEP BLUE CLI MAIN MENU ]____
+     ______[ DEEP BLUE MAIN MENU ]______
     |                                   |
     | [Security]    | $LogCountSecurity Records
     | [System]      | $LogCountSystem Records
@@ -218,21 +260,13 @@ $ParentFolder = "Threat Hunters Collection"
     | [Sysmon]      | $LogCountSysmon Records
     | [WMI]         | $LogCountWMI Records
     | [All]         | Filters all logs  |
+    | [Import]      | Import Logs & Run |
     | [Export]      | Export all logs   |
     | [Help]        | Syntax & Paths    |
     | [Back]        | Back to Main Menu |
     |___________________________________|`n `n
 "@
 
-
-
-# (THIS WILL BE DEPRECATED SOON)DBCLI Quick and easy variables for user to input instead of copy/pasting
-    $DBCLIList = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List"
-    $DBCLITable = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-Table"
-    $DBCLIGrid = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Out-GridView"
-    $DBCLIHtml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Html"
-    $DBCLIJson = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Json"
-    $DBCLIXml = ".\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | ConvertTo-Xml"
     $DBCLIHelp = @"
 
  __________________________________________________[ SYNTAX ]__________________________________________________
@@ -306,6 +340,100 @@ function RunRecordCount {
     $global:LogCountSysmon = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-Sysmon/Operational`" | Select-Object -ExpandProperty RecordCount"
     $global:LogCountWMI = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-WMI-Activity/Operational`" | Select-Object -ExpandProperty RecordCount"
 }
+# Running record count on imported files take way too long, this is disabled for now
+function RunImportRecordCount{
+    $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Security.evtx`""
+    $global:LogCountImportSecurity = $LogCountImportSecurity.Count
+}
+
+# Import Folder creation, wait for import confirmation from user, then run
+function RunImport{
+    # Clear
+    clear
+
+    # Welcome BannerAppC
+    Write-Host $BannerC
+    
+    # Create export log directory and notify path
+    $null = new-item -path "$($UserProfilePath)\Desktop\$ParentFolder" -name "Import-Log-Folder" -itemtype directory -Force
+    Write-Host $StatusCCreatedAppCImportLogFolder
+    Write-Host ">>>>>>>>> [ DeepBlue will assume unchanged default evtx file names ] `n"
+    Write-Host ">>>>>>>>>> [ Import evtx files to the `"Import-Log-Folder`", then run your command] `n"
+     
+    do
+    {
+        # RunImportRecordCount
+        ##showmenu
+        $selectionImport = Read-Host $AppCMenuImportMain "Imported main menu, Waiting for your input"
+        switch ($selectionImport)
+        {
+            'Security' {
+                $global:LogTarget = "Imported Security"
+                $global:LogType = $LogPathImportSecurity
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlueImported
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlueImported
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlueImported
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlueImported
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlueImported
+                        }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
+            }
+            'System' {
+            #Systemflow
+            } 
+            'Application' {
+            #Applicationflow
+            } 
+            'AppLocker' {
+            #Applockerflow
+            } 
+            'PowerShell' {
+                #Powershellflow
+            } 
+            'Sysmon' {
+            #Sysmonflow
+            } 
+            'WMI' {
+            #WMI flow
+            } 
+            'Back' {
+            DBCLIMenuMain
+            }
+        }
+        pause
+    }
+    until ($selection -eq 'q')
+}
 
 # Exporting DeepBlue logs will use this switchcase
 function ExportLog($LogType){
@@ -317,7 +445,7 @@ function ExportLog($LogType){
 
     # Create export log directory and notify path
     function global:CreateLogFolder{
-        $null = new-item -path "$($env:userprofile)\Desktop\$ParentFolder" -name "$Hostname-Evtx-Logs" -itemtype directory -Force
+        $null = new-item -path "$($UserProfilePath)\Desktop\$ParentFolder" -name "$Hostname-Evtx-Logs" -itemtype directory -Force
         Write-Host $StatusCCreatedAppCLogFolder
         }
     CreateLogFolder
@@ -387,17 +515,13 @@ function DBCLIMenuMain{
             # Executes function to grab record count to populate AppCMenuMain
             RunRecordCount
             # MainMenu for DBCLI, not case sensitive, will take alphanumeric inputs
-            $selection = Read-Host $StatusCReady $BannerC $AppCMenuMain "Waiting for your input"
+            $selection = Read-Host $StatusCReady $BannerC $AppCMenuMain "DeepBlue main menu, waiting for your input"
             switch ($selection)
             {
-                'XX DEPRECATED XX' {
-                    Write-Host $StatusCLoading
-                    DBCLIRecords
-                } 
                 'Security' {
                     $global:LogTarget = "Security"
                     $global:LogType = $LogPathSecurity
-                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget Menu, waiting for your input"
+                    $selection2 = Read-Host $AppCMenuSub "$global:LogTarget sub menu, waiting for your input"
                     switch ($selection2)
                     {
                         'List' {
@@ -713,6 +837,10 @@ function DBCLIMenuMain{
                 Write-Host $StatusCLoading
                 ExportLog("Security","System","Application","AppLocker","PowerShell","Sysmon","WMI")                 
                 }
+                'Import' {
+                    Write-Host $StatusCLoading
+                    RunImport
+                } 
                 'help' {
                 Clear-Host
                 Write-Host $BannerC
@@ -754,32 +882,43 @@ function StartDBCLI {
 
     # Notify hostname & IP address
     Write-Host "[Hostname]:" $Hostname
-    Write-Host "[Profile]:" $Profile
+    Write-Host "[Profile]:" $UserProfilePath
     Write-Host "[IP Address ]:" $IPAddress
 
     "`n"
 
     # Create the ParentAppCFolder in ParentFolder (Also hiding the Powershell Output)
-    $null = new-item -path "$($env:userprofile)\Desktop" -name $ParentFolder -itemtype directory -Force
+    $null = new-item -path "$($UserProfilePath)\Desktop" -name $ParentFolder -itemtype directory -Force
     Write-Host $StatusCCreatedAppCFolder
 
     # Change the directory to ParentAppCFolder
-    set-location "$($env:userprofile)\Desktop\$ParentFolder"
+    set-location "$($UserProfilePath)\Desktop\$ParentFolder"
     Write-Host $StatusCChangedDirToAppCFolder
-   
+    
+    # Check existing DeepBlueMaster folder from source repo, if exist, we delete to get a new untampered copy.
+    if (Test-Path .\$AppCName-master) {
+        Remove-Item .\$AppCName-master -Recurse
+    }
+
+    # Check existing DeepBlue folder, if exist, we delete to get a new untampered copy.
+    if (Test-Path .\$AppCName) {
+        Remove-Item .\$AppCName -Recurse
+    }
+    Write-Host $StatusCCheckAndRemoveExisting
+
     # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
     Write-Host $StatusCDownloadApp
-    Invoke-WebRequest $AppCURL -OutFile .\$AppCName.zip
+    Invoke-WebRequest -Uri $AppCURL -OutFile .\$AppCName.zip
     
-    
+
     $StatusCExtractedApp
-    Expand-Archive .\$AppCName.zip .\
+    Expand-Archive .\$AppCName.zip .\ -Force
     Rename-Item .\$AppCName-master .\$AppCName
     Remove-Item .\$AppCName.zip
     Write-Host $StatusCRemoveDownload
     
     # Change the directory to AppCName
-    set-location "$($env:userprofile)\Desktop\$ParentFolder\$AppCFolder"
+    set-location "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
     Write-Host $StatusCChangedDirToAppFolder
 
     # Check if staging and initialization is complete
