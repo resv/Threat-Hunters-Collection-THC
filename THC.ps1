@@ -199,7 +199,7 @@ $ParentFolder = "Threat Hunters Collection"
     # AppCMenuImport
     $AppCMenuImportSub = @"
     `n
-    $($LogCountImportSecurity.Count) $global:LogTarget
+    $global:LogTarget
      ______[ IMPORT SUB MENU ]_______
     |                                |
     | *[List]  | Format-List view    |
@@ -220,7 +220,7 @@ $ParentFolder = "Threat Hunters Collection"
      _______[ IMPORT MAIN MENU ]________
     |                                   |
     | [Security]    | $($LogCountImportSecurity.Count) Records
-    | [System]      |  Records
+    | [System]      | $($LogCountImportSystem.Count) Records
     | [Application] |  Records
     | [AppLocker]   |  Records
     | [Powershell]  |  Records
@@ -371,6 +371,11 @@ function RunImportRecordCount($LogTarget){
     $ImportRecordCount = $global:LogCountImportSecurity.Count
     }
 
+    if ($LogTarget -eq "Imported System"){
+    $global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\System.evtx`" -MaxEvents 1000000"
+    $ImportRecordCount = $global:LogCountImportSystem.Count
+    }
+
     Write-Host ">>>>>>>>>>> [ $LogTarget has ($ImportRecordCount) records ]`n"
 }
 
@@ -474,8 +479,13 @@ function RunImport{
                         $global:LogFormat = $PipeXml
                         RunDeepBlueImported
                         }
-                    'Record'{
-                        RunImportRecordCount
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Yes/No)"
+                        switch ($selection3Import)
+                        {
+                            'Yes'{RunImportRecordCount($LogTarget)} 
+                            'No'{AppCMenuImportMain}
+                        }
                     }
                     'Help' {
                         Clear-Host
