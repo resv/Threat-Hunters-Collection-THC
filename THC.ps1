@@ -199,17 +199,19 @@ $ParentFolder = "Threat Hunters Collection"
     # AppCMenuImport
     $AppCMenuImportSub = @"
     `n
-       $LogCount $global:LogTarget Log  Sub-Menu
-     _______[ IMPORT SUB MENU ]________
-    |                                  |
-    | *[List]   | Format-List view     |
-    | *[Table]  | Format-Table view    |
-    | *[Grid]   | Out-GridView view    |
-    |  [HTML]   | ConvertTo-Html view  |
-    |  [JSON]   | ConvertTo-Json view  |
-    |  [XML]    | ConvertTo-Xml view   |
-    |  [Back]   | Back to Main Menu    |
-    |__________________________________|`n `n
+    $($LogCountImportSecurity.Count) $global:LogTarget
+     ______[ IMPORT SUB MENU ]_______
+    |                                |
+    | *[List]  | Format-List view    |
+    | *[Table] | Format-Table view   |
+    | *[Grid]- | Out-GridView view   |
+    |  [HTML] -| ConvertTo-Html view |
+    |  [JSON] -| ConvertTo-Json view |
+    |  [XML]  -| ConvertTo-Xml view  |
+    |  [Records]| Get $global:LogTarget Count (This can take a long time)  |
+    |  [Help]  |  Syntax & Paths     |
+    |  [Back]  | Back to Main Menu   |
+    |________________________________|`n `n
 "@    
 
     # AppCMenuMain
@@ -217,7 +219,7 @@ $ParentFolder = "Threat Hunters Collection"
     `n
      _______[ IMPORT MAIN MENU ]________
     |                                   |
-    | [Security]    |  Records
+    | [Security]    | $($LogCountImportSecurity.Count) Records
     | [System]      |  Records
     | [Application] |  Records
     | [AppLocker]   |  Records
@@ -233,7 +235,7 @@ $ParentFolder = "Threat Hunters Collection"
     # AppCMenuSub
     $AppCMenuSub = @"
     `n
-       $LogCount $global:LogTarget Log Sub-Menu
+           $global:LogTarget ($LogCount)
      ______[ DEEP BLUE SUB MENU ]______
     |                                  |
     | *[List]   | Format-List view     |
@@ -242,6 +244,7 @@ $ParentFolder = "Threat Hunters Collection"
     |  [HTML]   | ConvertTo-Html view  |
     |  [JSON]   | ConvertTo-Json view  |
     |  [XML]    | ConvertTo-Xml view   |
+    |  [Help]   | Syntax & Paths       |
     |  [Export] | Export Logs          |
     |  [Back]   | Back to Main Menu    |
     |__________________________________|`n `n
@@ -271,25 +274,40 @@ $ParentFolder = "Threat Hunters Collection"
 
  __________________________________________________[ SYNTAX ]__________________________________________________
 |                                                                                                              |
-| [  <Script> ----- <Log Location> ---------------------------------------------------------- | <Switch> -- ]  |
+| [  <SCRIPT> ----- <HOST LOG PATH> --------------------------------------------------------- | <SWITCH> -- ]  |
 | [ .\DeepBlue.ps1 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx | Format-List ]  |
 |______________________________________________________________________________________________________________|
 
-         _______________________________________[ HOST LOG PATHS ]______________________________________ 
+         ______________________________________[ HOST LOG PATHS ]_______________________________________ 
         |                                                                                               |
-        |  [Security] C:\Windows\System32\winevt\Logs\Security.evtx                                     |
-        |  [System] C:\Windows\System32\winevt\Logs\System.evtx                                         |
-        |  [Application] C:\Windows\System32\winevt\Logs\Application.evtx                               |
-        |  [AppLocker] C:\Windows\System32\winevt\Logs\Microsoft-Windows-AppLocker%4EXE and DLL.evtx    |
-        |  [PowerShell] C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx  |
-        |  [Sysmon] C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx          |
-        |  [WMI] C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx       |
+        | [Security] "C:\Windows\System32\winevt\Logs\Security.evtx"                                    |
+        | [System] "C:\Windows\System32\winevt\Logs\System.evtx"                                        |
+        | [Application] "C:\Windows\System32\winevt\Logs\Application.evtx"                              |
+        | [AppLocker] "C:\Windows\System32\winevt\Logs\Microsoft-Windows-AppLocker%4EXE and DLL.evtx"   |
+        | [PowerShell] "C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx" |
+        | [Sysmon] "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"         |
+        | [WMI] "C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx"      |
         |_______________________________________________________________________________________________|
 
-         ____________________________________[ EXPORTED LOG PATHS ]_____________________________________ 
-        |                                                                                               |
-        |  [Exported Logs] Desktop\Threat Hunters Collection\"Hostname"-Evtx-Logs                       |
-        |_______________________________________________________________________________________________|
+                                     ___________[ SWITCHES ]___________
+                                    |                                  |
+                                    | *[List]  "| Format-List view"    |
+                                    | *[Table] "| Format-Table view"   |
+                                    | *[Grid]  "| Out-GridView view"   |
+                                    |  [HTML]  "| ConvertTo-Html view" |
+                                    |  [JSON]  "| ConvertTo-Json view" |
+                                    |  [XML]   "| ConvertTo-Xml view"  |
+                                    |__________________________________|
+
+                  __________________________[ IMPORTED LOG PATHS ]__________________________
+                 |                                                                          |
+                 | [Imported Logs] "..\Desktop\Threat Hunters Collection\Import-Log-Folder" |
+                 |__________________________________________________________________________|
+
+                 ___________________________[ EXPORTED LOG PATHS ]____________________________
+                |                                                                             |
+                | [Exported Logs] "..\Desktop\Threat Hunters Collection\"Hostname"-Evtx-Logs" |
+                |_____________________________________________________________________________|
 `n
 "@
 
@@ -339,11 +357,21 @@ function RunRecordCount {
     $global:LogCountPowerShell = Invoke-expression "get-winevent -listlog `"Windows PowerShell`" | Select-Object -ExpandProperty RecordCount"
     $global:LogCountSysmon = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-Sysmon/Operational`" | Select-Object -ExpandProperty RecordCount"
     $global:LogCountWMI = Invoke-expression "get-winevent -listlog `"Microsoft-Windows-WMI-Activity/Operational`" | Select-Object -ExpandProperty RecordCount"
+
 }
 # Running record count on imported files take way too long, this is disabled for now
-function RunImportRecordCount{
-    $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Security.evtx`""
-    $global:LogCountImportSecurity = $LogCountImportSecurity.Count
+function RunImportRecordCount($LogTarget){
+
+    clear
+    Write-Host "`n>>>>>>>>> [ Reboot THC if you want to exit out of this process, it can take a long time...]`n"
+    Write-Host ">>>>>>>>>> [ Counting records in $LogTarget log ]`n"
+    
+    if ($LogTarget -eq "Imported Security"){
+    $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Security.evtx`" -MaxEvents 1000000"
+    $ImportRecordCount = $global:LogCountImportSecurity.Count
+    }
+
+    Write-Host ">>>>>>>>>>> [ $LogTarget has ($ImportRecordCount) records ]`n"
 }
 
 # Import Folder creation, wait for import confirmation from user, then run
@@ -379,7 +407,7 @@ function RunImport{
                         } 
                     'table' {
                         $global:LogFormat = $PipeTable
-                        RunDeepBlueImported
+                        RunDeepBlue
                         }
                     'Grid' {
                         $global:LogFormat = $PipeGrid
@@ -397,6 +425,14 @@ function RunImport{
                         $global:LogFormat = $PipeXml
                         RunDeepBlueImported
                         }
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Yes/No)"
+                        switch ($selection3Import)
+                        {
+                            'Yes'{RunImportRecordCount($LogTarget)} 
+                            'No'{AppCMenuImportMain}
+                        }
+                    }
                     'Help' {
                         Clear-Host
                         Write-Host $BannerC
@@ -409,7 +445,48 @@ function RunImport{
                 pause
             }
             'System' {
-            #Systemflow
+                $global:LogTarget = "Imported System"
+                $global:LogType = $LogPathImportSystem
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlueImported
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlueImported
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlueImported
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlueImported
+                        }
+                    'Record'{
+                        RunImportRecordCount
+                    }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
             } 
             'Application' {
             #Applicationflow
@@ -425,6 +502,11 @@ function RunImport{
             } 
             'WMI' {
             #WMI flow
+            }
+            'Help' {
+                Clear-Host
+                Write-Host $BannerC
+                Write-Host $DBCLIHelp     
             } 
             'Back' {
             DBCLIMenuMain
@@ -488,6 +570,13 @@ function RunDeepBlue{
         "PowerShell"   { $LogCount = $LogCountPowerShell }
         "Sysmon"       { $LogCount = $LogCountSysmon }
         "WMI"          { $LogCount = $LogCountWMI }
+        "Imported Security"     { $LogCount = $LogCountImportSecurity }
+        "Imported System"       { $LogCount = $LogCountImportSystem }
+        "Imported Application"  { $LogCount = $LogCountImportApplication }
+        "Imported AppLocker"    { $LogCount = $LogCountImportApplocker }
+        "Imported PowerShell"   { $LogCount = $LogCountImportPowerShell }
+        "Imported Sysmon"       { $LogCount = $LogCountImportSysmon }
+        "Imported WMI"          { $LogCount = $LogCountImportWMI }
     }
 
     # Notify the query is running
