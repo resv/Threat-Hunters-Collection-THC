@@ -94,7 +94,7 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppA (Host Info)
     $AppAName = "Host Info"
-    $AppAdescription = "Get Host information"
+    $AppADescription = "Get Host information"
     $Hostname = hostname
     $UserProfilePath = $($env:userprofile)
     $PrintWorkingDirectory = Get-Location
@@ -148,12 +148,12 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
-    $AppBdescription = "Get $AppBName from MS and install"
+    $AppBDescription = "Get $AppBName from MS and install"
     $AppBFolder = "$AppBName"
 
 # VARIABLES - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
-    $AppCdescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
+    $AppCDescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
     $AppCFolder = "DeepBlueCLI"
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
@@ -219,8 +219,8 @@ $ParentFolder = "Threat Hunters Collection"
     `n
      _______[ IMPORT MAIN MENU ]________
     |                                   |
-    | [Security]    | $($LogCountImportSecurity.Count) Records
-    | [System]      | $($LogCountImportSystem.Count) Records
+    | [Security]    | $($global:LogCountImportSecurity.Count) Records
+    | [System]      | $($global:LogCountImportSystem.Count) Records
     | [Application] |  Records
     | [AppLocker]   |  Records
     | [Powershell]  |  Records
@@ -317,7 +317,19 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppE (CTI Search Online Reputation Search)
     $AppEName = "CTI Search"
-    $AppEdescription = "Online Reputation Searcher"
+    $AppEDescription = "Online Reputation Searcher"
+
+# VARIABLES - AppF (Placeholder)
+    $AppFName = "Placeholder"
+    $AppFDescription = "Placeholder"
+
+# VARIABLES - AppG (CTI Search Online Reputation Search)
+    $AppGName = "Placeholder"
+    $AppGDescription = "Placeholder"
+
+# VARIABLES - AppH (Wipe THC from endpoint)
+    $AppHName = "Wipe THC"
+    $AppHDescription = "Delete THC Folder"
 
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "Contact"
@@ -343,6 +355,9 @@ $Banner
   [C] $AppCName - $AppCDescription
   [D] $AppDName - $AppDDescription
   [E] $AppEName - $AppEDescription
+  [F] $AppFName - $AppFDescription
+  [G] $AppGName - $AppGDescription
+  [H] $AppHName - $AppHDescription
   [X] $AppXName - $AppXDescription
   [Z] $AppZName - $AppZDescription
  [ZZ] $AppZZName - $AppZZDescription `n
@@ -1027,6 +1042,27 @@ function StartDBCLI {
     DBCLIMenuMain
 }
 
+
+function WipeTHC {
+    # Confirm from user first, then check for THC folder, if exists, delete it.
+
+    $selectionWipeTHC = Read-Host "Are you sure you want to remove the $ParentFolder? (Yes/No)"
+    switch ($selectionWipeTHC)
+    {
+        'Yes' {
+            if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder") {
+                Remove-Item "$($UserProfilePath)\Desktop\$ParentFolder" -Recurse
+                }
+        } 
+        'No' {
+            Show-Menu
+        }
+    }
+    pause
+ }
+ until ($selection -eq 'q')
+
+
 # Execution starts here:
 # -------------------------------------------------------------------
 function Show-Menu {
@@ -1051,13 +1087,28 @@ do
         return
         } 
         'D' {
-        'You chose option #D'
+        'Autoruns'
         } 
         'E' {
-        'You chose option #E'
+        'CTI SEARCH'
         } 
         'F' {
-        'You chose option #F'
+        'Placeholder'
+        }
+        'G' {
+        'Placeholder'
+        }
+        'H' {
+        WipeTHC
+        }
+        'X' {
+        'Contact'
+        }
+        'Z' {
+        'Soft Exit'
+        }
+        'ZZ' {
+        'Hard Exit'
         }
     }
     pause
