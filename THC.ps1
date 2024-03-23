@@ -87,16 +87,17 @@ ________________________________________________________________________________
 "@
 
 
+
 $HealthCheck = "False"
 
 # VARIABLES - ParentFolder
 $ParentFolder = "Threat Hunters Collection"
+$UserProfilePath = $($env:userprofile)
 
-# VARIABLES - AppA (Host Info)
+# VARIABLES A - AppA (Host Info)
     $AppAName = "Host Info"
-    $AppADescription = "Get Host information"
+    $AppADescription = "Get Host Information"
     $Hostname = hostname
-    $UserProfilePath = $($env:userprofile)
     $PrintWorkingDirectory = Get-Location
         #Grab IP info
         $IPAddress = $env:HostIP = (
@@ -106,10 +107,10 @@ $ParentFolder = "Threat Hunters Collection"
                 $_.NetAdapter.Status -ne "Disconnected"
             }
         ).IPv4Address.IPAddress
+    $GetVolume = "Get-Volume | Select-Object @{Name='Drive';Expression='DriveLetter'}, FileSystemLabel, @{Name='Free';Expression='SizeRemaining'}, Size, @{Name='Type';Expression='FileSystemType'}, @{Name='Mount';Expression='DriveType'}, @{Name='Health';Expression='HealthStatus'},@{Name='Status';Expression='OperationalStatus'}| Format-Table -Wrap | Out-String"
+    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Select-Object Name, ScreenSaverActive, @{Name='Secure';Expression='ScreenSaverSecure'}, @{Name='Timeout';Expression='ScreenSaverTimeout'}| Format-Table | Out-String"
     
-    $GetVolume = "Get-Volume | Sort-Object -Property BasePriority | Format-Table -GroupBy BasePriority -Wrap | Out-String"
-    $GetPartition = "Get-Partition"
-    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Format-Table | Out-String"
+    $StatusAOutputComplete = "`n>>>>>>>>>> [ Host Info Output File Found (Desktop\$ParentFolder\$Hostname-Host-Info.txt) ]`n"
 
 # FUNCTION A
     function HostInfo {
@@ -123,35 +124,28 @@ $ParentFolder = "Threat Hunters Collection"
         Write-Host "[Hostname]:" $Hostname
         Write-Host "[Profile]:" $UserProfilePath
         Write-Host "[IP Address ]:" $IPAddress
-        
-        # Notify working directory
-        #Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
-
+       
         #More PC Info
         Get-ComputerInfo  -Property "CsNetworkAdapters","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","WindowsEditionId","OsArchitecture","OsBuildNumber","OsVersion","CsManufacturer","CsModel","BiosName","CsProcessors","CsNumberOfLogicalProcessors","TimeZone","OsInstallDate","OsLastBootUpTime","OsLocalDateTime","OsUptime"
 
         #Drive Information
         Write-Host "------------------------------------------------------- [ Drive Information ] -------------------------------------------------------"
         Invoke-expression $GetVolume.Trim()
-        #This one below is ok, but the above might be better
-        #Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" | Format-Table -Property DeviceID, VolumeName, FreeSpace, Size, DriveType
 
-        #Partition Information (excluded for now)
-        #Write-Host "------------------------------------------------------ [ Parition Info Start ] -------------------------------------------------------"
-        #Invoke-expression $GetPartition
-        #Write-Host "------------------------------------------------------ [ Parition Info End ] -------------------------------------------------------"
-        
         #All Desktops in Use or Not
-        Write-Host "--------------------------------------------------------- [ All Desktops ] ----------------------------------------------------------" 
+        Write-Host "----------------------------------------------------------- [ Desktops ] ------------------------------------------------------------" 
         Invoke-expression $GetCIM.Trim()
+
+        #Output the file to Parent folder
+        $StatusAOutputComplete
     }
 
-# VARIABLES - AppB (Sysmon)
+# VARIABLES B - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
     $AppBDescription = "Get $AppBName from MS and install"
     $AppBFolder = "$AppBName"
 
-# VARIABLES - AppC (DeepBlueCLI)
+# VARIABLES C - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
     $AppCDescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
     $AppCFolder = "DeepBlueCLI"
@@ -159,7 +153,7 @@ $ParentFolder = "Threat Hunters Collection"
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
         $AppCURLBackup = ""
     
-    # VARIABLES - Status notifications
+    # VARIABLES C - Status notifications
     $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
     $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to (..\$AppCFolder) ]`n"
     $StatusCCheckAndRemoveExisting = ">>> [ Removing any existing DeepBlue files ]`n"
@@ -236,7 +230,7 @@ $ParentFolder = "Threat Hunters Collection"
     $AppCMenuSub = @"
     `n
            $global:LogTarget ($LogCount)
-     ______[ DEEP BLUE SUB MENU ]______
+     _____[ DEEPBLUECLI SUB MENU ]_____
     |                                  |
     | *[List]   | Format-List view     |
     | *[Table]  | Format-Table view    |
@@ -253,7 +247,7 @@ $ParentFolder = "Threat Hunters Collection"
     # AppCMenuMain
     $AppCMenuMain = @"
     `n
-     ______[ DEEP BLUE MAIN MENU ]______
+     _____[ DEEPBLUECLI MAIN MENU ]_____
     |                                   |
     | [Security]    | $LogCountSecurity Records
     | [System]      | $LogCountSystem Records
@@ -266,6 +260,7 @@ $ParentFolder = "Threat Hunters Collection"
     | [Import]      | Import Logs & Run |
     | [Export]      | Export all logs   |
     | [Help]        | Syntax & Paths    |
+    | [WIPE]        | Wipe DeepBlueCLI  |
     | [Back]        | Back to Main Menu |
     |___________________________________|`n `n
 "@
@@ -329,7 +324,7 @@ $ParentFolder = "Threat Hunters Collection"
 
 # VARIABLES - AppH (Wipe THC from endpoint)
     $AppHName = "Wipe THC"
-    $AppHDescription = "Delete THC Folder"
+    $AppHDescription = "Delete all THC folder/files"
 
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "Contact"
