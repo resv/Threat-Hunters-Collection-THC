@@ -107,38 +107,45 @@ $UserProfilePath = $($env:userprofile)
                 $_.NetAdapter.Status -ne "Disconnected"
             }
         ).IPv4Address.IPAddress
-    $GetVolume = "Get-Volume | Select-Object @{Name='Drive';Expression='DriveLetter'}, FileSystemLabel, @{Name='Free';Expression='SizeRemaining'}, Size, @{Name='Type';Expression='FileSystemType'}, @{Name='Mount';Expression='DriveType'}, @{Name='Health';Expression='HealthStatus'},@{Name='Status';Expression='OperationalStatus'}| Format-Table -Wrap | Out-String"
-    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Select-Object Name, ScreenSaverActive, @{Name='Secure';Expression='ScreenSaverSecure'}, @{Name='Timeout';Expression='ScreenSaverTimeout'}| Format-Table | Out-String"
-    
-    $StatusAOutputComplete = "`n>>>>>>>>>> [ Host Info Output File Found (Desktop\$ParentFolder\$Hostname-Host-Info.txt) ]`n"
+    $GetVolume = "Get-Volume | Select-Object @{Name='Drive';Expression='DriveLetter'}, FileSystemLabel, @{Name='Free `(GB`)';Expression={[math]::Round(`$_.SizeRemaining / 1GB, 2)}}, @{Name='Size `(GB`)';Expression={[math]::Round(`$_.Size / 1GB, 2)}}, @{Name='Type';Expression='FileSystemType'}, @{Name='Mount';Expression='DriveType'}, @{Name='Health';Expression='HealthStatus'},@{Name='Status';Expression='OperationalStatus'}| Format-Table -Wrap | Out-String"
+    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Select-Object @{Name='Name | ScreenSaver ------->';Expression='Name'}, @{Name='Active';Expression='ScreenSaverActive'}, @{Name='Secure';Expression='ScreenSaverSecure'}, @{Name='Timeout';Expression='ScreenSaverTimeout'}| Format-Table | Out-String"
 
 # FUNCTION A
     function HostInfo {
-        #Clear
-        clear
+    #Clear
+    Clear
+    
+    # Start transcript to capture all output
+    Start-Transcript -Path "$env:USERPROFILE\Desktop\$ParentFolder\$Hostname-Host-Info.txt" -Append 
+    
+    # Welcome BannerAppA
+    Write-Host $BannerA
+    
+    # Host Information
+    Write-Host "------------------------------------------------------- [ HOST INFORMATION ] -------------------------------------------------------`n"
 
-        # Welcome BannerAppA
-        Write-Host $BannerA
+    # Get current time stamp
+    Write-Host "[Date]: $(Get-Date)"
+    
+    # Notify hostname & IP address
+    Write-Host "[Hostname]: $Hostname"
+    Write-Host "[Profile]: $UserProfilePath"
+    Write-Host "[IP Address]: $IPAddress"
+    
+    # More PC Info
+    Get-ComputerInfo -Property "CsNetworkAdapters","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","WindowsEditionId","OsArchitecture","OsBuildNumber","OsVersion","CsManufacturer","CsModel","BiosName","CsProcessors","CsNumberOfLogicalProcessors","TimeZone","OsInstallDate","OsLastBootUpTime","OsLocalDateTime","OsUptime"
 
-        # Notify hostname & IP address
-        Write-Host "[Hostname]:" $Hostname
-        Write-Host "[Profile]:" $UserProfilePath
-        Write-Host "[IP Address ]:" $IPAddress
-       
-        #More PC Info
-        Get-ComputerInfo  -Property "CsNetworkAdapters","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","WindowsEditionId","OsArchitecture","OsBuildNumber","OsVersion","CsManufacturer","CsModel","BiosName","CsProcessors","CsNumberOfLogicalProcessors","TimeZone","OsInstallDate","OsLastBootUpTime","OsLocalDateTime","OsUptime"
+    # Drive Information
+    Write-Host "------------------------------------------------------- [ DRIVE INFORMATION ] -------------------------------------------------------"
+    Invoke-Expression $GetVolume.Trim()
 
-        #Drive Information
-        Write-Host "------------------------------------------------------- [ Drive Information ] -------------------------------------------------------"
-        Invoke-expression $GetVolume.Trim()
-
-        #All Desktops in Use or Not
-        Write-Host "----------------------------------------------------------- [ Desktops ] ------------------------------------------------------------" 
-        Invoke-expression $GetCIM.Trim()
-
-        #Output the file to Parent folder
-        $StatusAOutputComplete
-    }
+    # All Desktops in Use or Not
+    Write-Host "----------------------------------------------------- [ Desktops | SCREENSAVER ] ----------------------------------------------------" 
+    Invoke-Expression $GetCIM.Trim()
+    
+    # Stop transcript
+    Stop-Transcript
+}
 
 # VARIABLES B - AppB (Sysmon)
     $AppBName = "Sysmon vXX.XX"
