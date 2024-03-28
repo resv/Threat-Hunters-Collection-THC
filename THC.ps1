@@ -115,7 +115,7 @@ $UserProfilePath = $($env:userprofile)
     #Clear
     Clear
     
-    # Start transcript to capture all output
+    # Start transcript to capture all output, appends info if tracking changes.
     Start-Transcript -Path "$env:USERPROFILE\Desktop\$ParentFolder\$Hostname-Host-Info.txt" -Append 
     
     # Welcome BannerAppA
@@ -159,20 +159,22 @@ $UserProfilePath = $($env:userprofile)
         # URLs
         $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
         $AppCURLBackup = ""
-    
+    $AppCHash = "2295C0E92697A8F5425F20E4119F7A049428C2A47AF48F88ABABA206309DEE51"
+
     # VARIABLES C - Status notifications
     $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
     $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to (..\$AppCFolder) ]`n"
     $StatusCCheckAndRemoveExisting = ">>> [ Removing any existing DeepBlue files ]`n"
     $StatusCDownloadApp = ">>>> [ Downloading `"$AppCName`" ]`n"
-    $StatusCExtractedApp = ">>>>> [ Extracted `"$AppCName`" ]`n"
-    $StatusCRemoveDownload =  ">>>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
-    $StatusCChangedDirToAppFolder = ">>>>>>> [ You are in the (..\Desktop\$ParentFolder\$AppCFolder) directory ]`n"
-    $StatusCReady = ">>>>>>>> [ Ready for Hunting... ]`n"
-    $StatusCLoading = ">>>>>>>>> [ Retrieving Data... ]`n"
-    $StatusCCreatedAppCLogFolder = "`n>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
+    $StatusCHashCheck = ">>>>> [ Checking hash ]`n"
+    $StatusCExtractedApp = ">>>>>> [ Extracted `"$AppCName`" ]`n"
+    $StatusCRemoveDownload =  ">>>>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
+    $StatusCChangedDirToAppFolder = ">>>>>>>> [ You are in the (..\Desktop\$ParentFolder\$AppCFolder) directory ]`n"
+    $StatusCReady = ">>>>>>>>> [ Ready for Hunting... ]`n"
+    $StatusCLoading = ">>>>>>>>>> [ Retrieving Data... ]`n"
+    $StatusCCreatedAppCLogFolder = "`n>>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories ..\Desktop\$ParentFolder\Import-Log-Folder ]`n"
-    $StatusCExportComplete = "`n>>>>>>>>>> [ Exported Raw Logs to (Desktop\$ParentFolder\$Hostname-Evtx-Logs) ]`n"
+    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to (Desktop\$ParentFolder\$Hostname-Evtx-Logs) ]`n"
     $DeepBlueExecute = ".\DeepBlue.ps1"
     $LogPathExportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
     $LogPathImportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder"
@@ -991,7 +993,9 @@ function StartDBCLI {
     #DBCLI
     #------- Some Stats -------
     # Notify DBCLI URL being used
-    Write-host "[Application URL]:" $AppCURL
+    Write-Host "[Source Code URL]:" $AppCURL
+    Write-Host "[Backup URL]:" $AppCURLBackup
+    Write-Host "[Hash]:" $AppCHash
 
     # Notify working directory
     Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
@@ -1022,12 +1026,20 @@ function StartDBCLI {
     }
     Write-Host $StatusCCheckAndRemoveExisting
 
-    # Download zip file from Repo, extract zip, rename zip, delete downloaded zip file
+    # Download zip file from Repo
     Write-Host $StatusCDownloadApp
     Invoke-WebRequest -Uri $AppCURL -OutFile .\$AppCName.zip
-    
 
-    $StatusCExtractedApp
+    # Diff Hash, deny progression
+    Write-Host $StatusCHashCheck
+    $HashDownload = Get-FileHash .\$AppCName.zip | Select-Object -ExpandProperty Hash
+    Write-Host "  Expected: $AppCHash"
+    Write-Host "Downloaded: $HashDownload"`n
+
+    #HASH CHECK GOES HERE*********************************************************************************************************************************************************    
+
+    # Extract, rename, delete downloaded zip file
+    Write-Host $StatusCExtractedApp
     Expand-Archive .\$AppCName.zip .\ -Force
     Rename-Item .\$AppCName-master .\$AppCName
     Remove-Item .\$AppCName.zip
