@@ -157,24 +157,26 @@ $UserProfilePath = $($env:userprofile)
     $AppCDescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
     $AppCFolder = "DeepBlueCLI"
         # URLs
-        $AppCURL = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
-        $AppCURLBackup = ""
-    $AppCHash = "2295C0E92697A8F5425F20E4119F7A049428C2A47AF48F88ABABA206309DEE51"
+        $AppCURLMain = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
+        $AppCURLMirror = "https://github.com/resv/DeepBlueCLI-Back-Up/archive/refs/heads/master.zip"
+           
+    $AppCHashMain = "2295C0E92697A8F5425F20E4119F7A049428C2A47AF48F88ABABA206309DEE51"
+    $AppCHashMirror = "880DF755D4F37C91B5FFDB246F2C51C55F67025434C8E74EF74EC836BD70B58D"
 
     # VARIABLES C - Status notifications
     $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
-    $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to (..\$AppCFolder) ]`n"
+    $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to ..\$AppCFolder ]`n"
     $StatusCCheckAndRemoveExisting = ">>> [ Removing any existing DeepBlue files ]`n"
     $StatusCDownloadApp = ">>>> [ Downloading `"$AppCName`" ]`n"
     $StatusCHashCheck = ">>>>> [ Checking hash ]`n"
     $StatusCExtractedApp = ">>>>>> [ Extracted `"$AppCName`" ]`n"
     $StatusCRemoveDownload =  ">>>>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
-    $StatusCChangedDirToAppFolder = ">>>>>>>> [ You are in the (..\Desktop\$ParentFolder\$AppCFolder) directory ]`n"
+    $StatusCChangedDirToAppFolder = ">>>>>>>> [ You are in the ..\Desktop\$ParentFolder\$AppCFolder ]`n"
     $StatusCReady = ">>>>>>>>> [ Ready for Hunting... ]`n"
     $StatusCLoading = ">>>>>>>>>> [ Retrieving Data... ]`n"
     $StatusCCreatedAppCLogFolder = "`n>>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories ..\Desktop\$ParentFolder\Import-Log-Folder ]`n"
-    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to (Desktop\$ParentFolder\$Hostname-Evtx-Logs) ]`n"
+    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to ..\Desktop\$ParentFolder\$Hostname-Evtx-Logs ]`n"
     $DeepBlueExecute = ".\DeepBlue.ps1"
     $LogPathExportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
     $LogPathImportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder"
@@ -315,21 +317,21 @@ $UserProfilePath = $($env:userprofile)
 `n
 "@
 
-# VARIABLES - AppD (Autoruns)
-    $AppDName = "Autoruns"
-    $AppDDescription = "Scheduled tasks/persistence checker"
+# VARIABLES - AppD (DBCLI BACKUP URL)
+    $AppDName = "DeepBlueCLI Mirror"
+    $AppDDescription = "Get $AppCName from mirror repo, extract to desktop, remove zip"
 
-# VARIABLES - AppE (CTI Search Online Reputation Search)
-    $AppEName = "CTI Search"
-    $AppEDescription = "Online Reputation Searcher"
+# VARIABLES - AppE (placeholder)
+    $AppEName = "placeholder"
+    $AppEDescription = "placeholder"
 
-# VARIABLES - AppF (Placeholder)
-    $AppFName = "Placeholder"
-    $AppFDescription = "Placeholder"
+# VARIABLES - AppF (Autoruns)
+    $AppFName = "Autoruns"
+    $AppFDescription = "Scheduled tasks/persistence checker"
 
 # VARIABLES - AppG (CTI Search Online Reputation Search)
-    $AppGName = "Placeholder"
-    $AppGDescription = "Placeholder"
+    $AppGName = "CTI Search"
+    $AppGDescription = "Online Reputation Searcher"
 
 # VARIABLES - AppH (Wipe THC from endpoint)
     $AppHName = "Wipe THC"
@@ -983,29 +985,23 @@ function DBCLIMenuMain{
     }
 }
 
-function StartDBCLI {   
+function StartDBCLI($Source) {   
     #Clear
     clear
 
     # Welcome BannerAppC
     Write-Host `n`n`n`n`n`n
 
-    #DBCLI
-    #------- Some Stats -------
-    # Notify DBCLI URL being used
-    Write-Host "[Source Code URL]:" $AppCURL
-    Write-Host "[Backup URL]:" $AppCURLBackup
-    Write-Host "[Hash]:" $AppCHash
-
-    # Notify working directory
-    Write-Host "[PWD]:" $PrintWorkingDirectory\$ParentAppCFolder
-
-    # Notify hostname & IP address
-    Write-Host "[Hostname]:" $Hostname
-    Write-Host "[Profile]:" $UserProfilePath
-    Write-Host "[IP Address ]:" $IPAddress
-
-    "`n"
+    # Notify DBCLI Source URL and hash
+     # Check for Download request
+     if ($Source -eq "MAIN SOURCE"){
+        Write-Host "[MAIN SOURCE]:" $AppCURLMain
+        Write-Host "[SHA-256]: {$AppCHashMain}" `n
+    }
+    if ($Source -eq "MIRROR SOURCE"){
+        Write-Host "[MIRROR SOURCE]: $AppCURLMirror "
+        Write-Host "[SHA-256]: {$AppCHashMirror}"`n
+    }
 
     # Create the ParentAppCFolder in ParentFolder (Also hiding the Powershell Output)
     $null = new-item -path "$($UserProfilePath)\Desktop" -name $ParentFolder -itemtype directory -Force
@@ -1026,24 +1022,48 @@ function StartDBCLI {
     }
     Write-Host $StatusCCheckAndRemoveExisting
 
+    # Check for Download request
+    if ($Source -eq "MAIN SOURCE"){
+        $global:AppCURLUsed = $AppCURLMain
+        $AppCHashUsed = $AppCHashMain
+    }
+    if ($Source -eq "MIRROR SOURCE"){
+        $global:AppCURLUsed = $AppCURLMirror
+        $AppCHashUsed = $AppCHashMirror
+    }
+
     # Download zip file from Repo
     Write-Host $StatusCDownloadApp
-    Invoke-WebRequest -Uri $AppCURL -OutFile .\$AppCName.zip
+    Clear-Variable -Name "Source" -Scope Global
+    Invoke-WebRequest -Uri $AppCURLUsed -OutFile .\$AppCName.zip
 
-    # Diff Hash, deny progression
+    # Download DBCLI
     Write-Host $StatusCHashCheck
     $HashDownload = Get-FileHash .\$AppCName.zip | Select-Object -ExpandProperty Hash
-    Write-Host "  Expected: $AppCHash"
-    Write-Host "Downloaded: $HashDownload"`n
+    Write-Host "  [EXPECTED]: {$AppCHashUsed}"
+    Write-Host "[DOWNLOADED]: {$HashDownload}"
 
-    #HASH CHECK GOES HERE*********************************************************************************************************************************************************    
+        # Hash Diff Allow/Deny Progression    
+        if ($AppCHashUsed -eq $HashDownload){
+            $AppCHashValid = "True"
+            Write-Host "              |------------------------- [ HASH VALID ] -----------------------|`n"
+            
+        }
+        else {
+            $AppCHashValid = "False"
+            Write-Host "Hash INVALID, URL possibly hijacked or updated. Use MIRROR SOURCE for saftey."
+            Remove-Item .\$AppCName.zip
+            pause
+            
+        }
 
-    # Extract, rename, delete downloaded zip file
-    Write-Host $StatusCExtractedApp
-    Expand-Archive .\$AppCName.zip .\ -Force
-    Rename-Item .\$AppCName-master .\$AppCName
-    Remove-Item .\$AppCName.zip
-    Write-Host $StatusCRemoveDownload
+        if ($AppCHashValid -eq "True"){
+        # Extract, rename, delete downloaded zip file
+        Write-Host $StatusCExtractedApp
+        Expand-Archive .\$AppCName.zip .\ -Force
+        Rename-Item .\$AppCName-master .\$AppCName
+        Remove-Item .\$AppCName.zip
+        Write-Host $StatusCRemoveDownload
     
     # Change the directory to AppCName
     set-location "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
@@ -1054,6 +1074,7 @@ function StartDBCLI {
     
     # Call DBCLIMenu
     DBCLIMenuMain
+    }
 }
 
 
@@ -1083,7 +1104,6 @@ function Show-Menu {
     Clear-Host
     Write-Host $MenuMain
 }
-
 do
  {
     Show-Menu
@@ -1097,20 +1117,23 @@ do
         'You chose option #B'
         } 
         'C' {
-        StartDBCLI
-        return
+        $global:Source = "MAIN SOURCE"
+        StartDBCLI($Source)
+        
         } 
         'D' {
-        'Autoruns'
+        $global:Source = "MIRROR SOURCE"
+        StartDBCLI($Source)
+        
         } 
         'E' {
-        'CTI SEARCH'
+        'Placeholder'
         } 
         'F' {
-        'Placeholder'
+        'Autoruns'
         }
         'G' {
-        'Placeholder'
+        'CTI SEARCH'
         }
         'H' {
         WipeTHC
