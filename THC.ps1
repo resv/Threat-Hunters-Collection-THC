@@ -161,7 +161,7 @@ $UserProfilePath = $($env:userprofile)
         $AppCURLMirror = "https://github.com/resv/DeepBlueCLI-Back-Up/archive/refs/heads/master.zip"
            
     $AppCHashMain = "2295C0E92697A8F5425F20E4119F7A049428C2A47AF48F88ABABA206309DEE51"
-    $AppCHashMirror = "880DF755D4F37C91B5FFDB246F2C51C55F67025434C8E74EF74EC836BD70B58D"
+    $AppCHashMirror = "9B0BA2CE0752AE68C0AE8553AD14E46590A6745F9B7EAA085E20C2363B9D4CA9"
 
     # VARIABLES C - Status notifications
     $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
@@ -992,8 +992,7 @@ function StartDBCLI($Source) {
     # Welcome BannerAppC
     Write-Host `n`n`n`n`n`n
 
-    # Notify DBCLI Source URL and hash
-     # Check for Download request
+    # Notify DBCLI Source URL and hash based on request
      if ($Source -eq "MAIN SOURCE"){
         Write-Host "[MAIN SOURCE]:" $AppCURLMain
         Write-Host "[SHA-256]: {$AppCHashMain}" `n
@@ -1010,11 +1009,6 @@ function StartDBCLI($Source) {
     # Change the directory to ParentAppCFolder
     set-location "$($UserProfilePath)\Desktop\$ParentFolder"
     Write-Host $StatusCChangedDirToAppCFolder
-    
-    # Check existing DeepBlueMaster folder from source repo, if exist, we delete to get a new untampered copy.
-    if (Test-Path .\$AppCName-master) {
-        Remove-Item .\$AppCName-master -Recurse
-    }
 
     # Check existing DeepBlue folder, if exist, we delete to get a new untampered copy.
     if (Test-Path .\$AppCName) {
