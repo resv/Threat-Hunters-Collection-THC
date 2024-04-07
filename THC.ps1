@@ -122,7 +122,7 @@ $UserProfilePath = $($env:userprofile)
     Write-Host $BannerA
     
     # Host Information
-    Write-Host "------------------------------------------------------- [ HOST INFORMATION ] -------------------------------------------------------`n"
+    Write-Host "------------------------------------------------------- [ HOST INFORMATION ] -------------------------------------------------------`n" -ForegroundColor Green
 
     # Get current time stamp
     Write-Host "[Date]: $(Get-Date)"
@@ -136,11 +136,11 @@ $UserProfilePath = $($env:userprofile)
     Get-ComputerInfo -Property "CsNetworkAdapters","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","WindowsEditionId","OsArchitecture","OsBuildNumber","OsVersion","CsManufacturer","CsModel","BiosName","CsProcessors","CsNumberOfLogicalProcessors","TimeZone","OsInstallDate","OsLastBootUpTime","OsLocalDateTime","OsUptime"
 
     # Drive Information
-    Write-Host "------------------------------------------------------- [ DRIVE INFORMATION ] -------------------------------------------------------"
+    Write-Host "------------------------------------------------------- [ DRIVE INFORMATION ] -------------------------------------------------------" -ForegroundColor Green
     Invoke-Expression $GetVolume.Trim()
 
     # All Desktops in Use or Not
-    Write-Host "----------------------------------------------------- [ Desktops | SCREENSAVER ] ----------------------------------------------------" 
+    Write-Host "----------------------------------------------------- [ Desktops | SCREENSAVER ] ----------------------------------------------------" -ForegroundColor Green
     Invoke-Expression $GetCIM.Trim()
     
     # Stop transcript
@@ -947,7 +947,7 @@ function DBCLIMenuMain{
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
                             }        
-                        'Back' {
+                        'BBack' {
                             AppCMenuMain
                             } 
                     }
@@ -977,7 +977,7 @@ function DBCLIMenuMain{
             }
             pause
         }
-        until ($selection -eq 'q')
+        until ($selection -eq 'back')
     }
     else
     {
@@ -994,27 +994,27 @@ function StartDBCLI($Source) {
 
     # Notify DBCLI Source URL and hash based on request
      if ($Source -eq "MAIN SOURCE"){
-        Write-Host "[MAIN SOURCE]:" $AppCURLMain
-        Write-Host "[SHA-256]: {$AppCHashMain}" `n
+        Write-Host "[MAIN SOURCE]: " -ForegroundColor Green -NoNewline; Write-Host $AppCURLMain -ForegroundColor Yellow
+        Write-Host "    [SHA-256]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashMain}" -ForegroundColor Yellow `n 
     }
     if ($Source -eq "MIRROR SOURCE"){
-        Write-Host "[MIRROR SOURCE]: $AppCURLMirror "
-        Write-Host "[SHA-256]: {$AppCHashMirror}"`n
+        Write-Host "[MIRROR SOURCE]: " -ForegroundColor Green -NoNewline; Write-Host $AppCURLMirror -ForegroundColor Yellow
+        Write-Host "      [SHA-256]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashMirror}" -ForegroundColor Yellow `n
     }
 
     # Create the ParentAppCFolder in ParentFolder (Also hiding the Powershell Output)
     $null = new-item -path "$($UserProfilePath)\Desktop" -name $ParentFolder -itemtype directory -Force
-    Write-Host $StatusCCreatedAppCFolder
+    Write-Host $StatusCCreatedAppCFolder -ForegroundColor Green
 
     # Change the directory to ParentAppCFolder
     set-location "$($UserProfilePath)\Desktop\$ParentFolder"
-    Write-Host $StatusCChangedDirToAppCFolder
+    Write-Host $StatusCChangedDirToAppCFolder -ForegroundColor Green
 
     # Check existing DeepBlue folder, if exist, we delete to get a new untampered copy.
     if (Test-Path .\$AppCName) {
         Remove-Item .\$AppCName -Recurse
     }
-    Write-Host $StatusCCheckAndRemoveExisting
+    Write-Host $StatusCCheckAndRemoveExisting -ForegroundColor Green
 
     # Check for Download request
     if ($Source -eq "MAIN SOURCE"){
@@ -1027,25 +1027,25 @@ function StartDBCLI($Source) {
     }
 
     # Download zip file from Repo
-    Write-Host $StatusCDownloadApp
+    Write-Host $StatusCDownloadApp -ForegroundColor Green
     Clear-Variable -Name "Source" -Scope Global
     Invoke-WebRequest -Uri $AppCURLUsed -OutFile .\$AppCName.zip
 
     # Download DBCLI
-    Write-Host $StatusCHashCheck
+    Write-Host $StatusCHashCheck -ForegroundColor Green
     $HashDownload = Get-FileHash .\$AppCName.zip | Select-Object -ExpandProperty Hash
-    Write-Host "  [EXPECTED]: {$AppCHashUsed}"
-    Write-Host "[DOWNLOADED]: {$HashDownload}"
+    Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashUsed}" -ForegroundColor Red
+    Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Red
 
         # Hash Diff Allow/Deny Progression    
         if ($AppCHashUsed -eq $HashDownload){
             $AppCHashValid = "True"
-            Write-Host "              |------------------------- [ HASH VALID ] -----------------------|`n"
+            Write-Host "              |------------------------- [ HASH VALID ] -----------------------|`n" -ForegroundColor Green
             
         }
         else {
             $AppCHashValid = "False"
-            Write-Host "Hash INVALID, URL possibly hijacked or updated. Use MIRROR SOURCE for saftey."
+            Write-Host "Hash INVALID, URL possibly hijacked or updated. Use MIRROR SOURCE for saftey." -ForegroundColor Red
             Remove-Item .\$AppCName.zip
             pause
             
@@ -1053,15 +1053,15 @@ function StartDBCLI($Source) {
 
         if ($AppCHashValid -eq "True"){
         # Extract, rename, delete downloaded zip file
-        Write-Host $StatusCExtractedApp
+        Write-Host $StatusCExtractedApp -ForegroundColor Green
         Expand-Archive .\$AppCName.zip .\ -Force
         Rename-Item .\$AppCName-master .\$AppCName
         Remove-Item .\$AppCName.zip
-        Write-Host $StatusCRemoveDownload
+        Write-Host $StatusCRemoveDownload -ForegroundColor Green
     
     # Change the directory to AppCName
     set-location "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
-    Write-Host $StatusCChangedDirToAppFolder
+    Write-Host $StatusCChangedDirToAppFolder -ForegroundColor Green
 
     # Check if staging and initialization is complete
     $HealthCheck = "True"
@@ -1080,7 +1080,7 @@ function WipeTHC {
     {
         'Yes' {
             if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder") {
-                Remove-Item "$($UserProfilePath)\Desktop\$ParentFolder" -Recurse
+                Remove-Item "$($UserProfilePath)\Desktop\$ParentFolder" -Recurse -Force
                 }
         } 
         'No' {
@@ -1089,7 +1089,7 @@ function WipeTHC {
     }
     pause
  }
- until ($selection -eq 'q')
+ until ($selection -eq 'back')
 
 
 # Execution starts here:
@@ -1144,5 +1144,5 @@ do
     }
     pause
  }
- until ($selection -eq 'q')
+ until ($selection -eq 'back')
 
