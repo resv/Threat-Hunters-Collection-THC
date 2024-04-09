@@ -140,7 +140,7 @@ $UserProfilePath = $($env:userprofile)
     Invoke-Expression $GetVolume.Trim()
 
     # All Desktops in Use or Not
-    Write-Host "----------------------------------------------------- [ Desktops | SCREENSAVER ] ----------------------------------------------------" -ForegroundColor Green
+    Write-Host "----------------------------------------------------- [ DESKTOPS | SCREENSAVER ] ----------------------------------------------------" -ForegroundColor Green
     Invoke-Expression $GetCIM.Trim()
     
     # Stop transcript
@@ -271,7 +271,7 @@ $UserProfilePath = $($env:userprofile)
     | [Import]      | Import Logs & Run |
     | [Export]      | Export all logs   |
     | [Help]        | Syntax & Paths    |
-    | [WIPE]        | Wipe DeepBlueCLI  |
+    | [Wipe]        | Wipe DeepBlueCLI  |
     | [Back]        | Back to Main Menu |
     |___________________________________|`n `n
 "@
@@ -972,7 +972,7 @@ function DBCLIMenuMain{
                 Write-Host "If this export was successfully you should see this text <<<<< also check folder..."
                 }
                 'Wipe' {
-                # Invoke DBCLI Variable to wipe DBCLI and possibly THC
+                AppCWipe
                 }
             }
             pause
@@ -1071,15 +1071,35 @@ function StartDBCLI($Source) {
     }
 }
 
+function AppCWipe {
+     # Confirm from user first, then check for DeepBlue folder, if exists, delete it.
+
+    $selectionAppCWipe = Read-Host "Are you sure you want to remove the $AppCFolder Directory? (Yes/No)"
+    switch ($selectionAppCWipe)
+    {
+        'Yes' {
+            if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder") {
+                set-location "$($UserProfilePath)\Desktop\$ParentFolder"
+                Remove-Item -Recurse -Force "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
+                }
+        } 
+        'No' {
+            Show-Menu
+        }
+    }
+    pause
+ }
+ until ($selection -eq 'back')
 
 function WipeTHC {
     # Confirm from user first, then check for THC folder, if exists, delete it.
 
-    $selectionWipeTHC = Read-Host "Are you sure you want to remove the $ParentFolder? (Yes/No)"
+    $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Yes/No)"
     switch ($selectionWipeTHC)
     {
         'Yes' {
             if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder") {
+                set-location "$($UserProfilePath)\Desktop"
                 Remove-Item "$($UserProfilePath)\Desktop\$ParentFolder" -Recurse -Force
                 }
         } 
