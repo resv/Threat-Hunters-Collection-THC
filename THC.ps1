@@ -100,15 +100,9 @@ $UserProfilePath = $($env:userprofile)
     $Hostname = hostname
     $PrintWorkingDirectory = Get-Location
         #Grab IP info
-        $IPAddress = $env:HostIP = (
-            Get-NetIPConfiguration |
-            Where-Object {
-                $_.IPv4DefaultGateway -ne $null -and
-                $_.NetAdapter.Status -ne "Disconnected"
-            }
-        ).IPv4Address.IPAddress
+        $IPAddress= $env:HostIP = (Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.Status -ne "Disconnected"}).IPv4Address.IPAddress
     $GetVolume = "Get-Volume | Select-Object @{Name='Drive';Expression='DriveLetter'}, FileSystemLabel, @{Name='Free `(GB`)';Expression={[math]::Round(`$_.SizeRemaining / 1GB, 2)}}, @{Name='Size `(GB`)';Expression={[math]::Round(`$_.Size / 1GB, 2)}}, @{Name='Type';Expression='FileSystemType'}, @{Name='Mount';Expression='DriveType'}, @{Name='Health';Expression='HealthStatus'},@{Name='Status';Expression='OperationalStatus'}| Format-Table -Wrap | Out-String"
-    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Select-Object @{Name='Name | ScreenSaver ------->';Expression='Name'}, @{Name='Active';Expression='ScreenSaverActive'}, @{Name='Secure';Expression='ScreenSaverSecure'}, @{Name='Timeout';Expression='ScreenSaverTimeout'}| Format-Table | Out-String"
+    $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Select-Object @{Name='Name | ScreenSaver ------->';Expression='Name'}, @{Name='Active';Expression='ScreenSaverActive'}, @{Name='Secure';Expression='ScreenSaverSecure'}, @{Name='Timeout';Expression='ScreenSaverTimeout'}| Format-Table -Wrap | Out-String"
 
 # FUNCTION A
     function HostInfo {
@@ -116,13 +110,13 @@ $UserProfilePath = $($env:userprofile)
     Clear
     
     # Start transcript to capture all output, appends info if tracking changes.
-    Start-Transcript -Path "$env:USERPROFILE\Desktop\$ParentFolder\$Hostname-Host-Info.txt" -Append 
+    Start-Transcript -Path "$env:USERPROFILE\Desktop\$ParentFolder\$Hostname-Host-Info.txt" -Append | Out-Null
     
     # Welcome BannerAppA
     Write-Host $BannerA
     
     # Host Information
-    Write-Host "------------------------------------------------------- [ HOST INFORMATION ] -------------------------------------------------------`n" -ForegroundColor Green
+    Write-Host "----------------------------------- [ HOST INFORMATION ] -----------------------------------`n" -ForegroundColor Green
 
     # Get current time stamp
     Write-Host "[Date]: $(Get-Date)"
@@ -130,21 +124,22 @@ $UserProfilePath = $($env:userprofile)
     # Notify hostname & IP address
     Write-Host "[Hostname]: $Hostname"
     Write-Host "[Profile]: $UserProfilePath"
-    Write-Host "[IP Address]: $IPAddress"
+    Write-Host "[IP Address]: $IPAddress" -NoNewline
     
     # More PC Info
     Get-ComputerInfo -Property "CsNetworkAdapters","CsDomain","CsUserName","LogonServer","WindowsRegisteredOwner","WindowsProductName","WindowsEditionId","OsArchitecture","OsBuildNumber","OsVersion","CsManufacturer","CsModel","BiosName","CsProcessors","CsNumberOfLogicalProcessors","TimeZone","OsInstallDate","OsLastBootUpTime","OsLocalDateTime","OsUptime"
 
     # Drive Information
-    Write-Host "------------------------------------------------------- [ DRIVE INFORMATION ] -------------------------------------------------------" -ForegroundColor Green
+    Write-Host "---------------------------------- [ DRIVE INFORMATION ] ------------------------------------" -ForegroundColor Green
     Invoke-Expression $GetVolume.Trim()
 
     # All Desktops in Use or Not
-    Write-Host "----------------------------------------------------- [ DESKTOPS | SCREENSAVER ] ----------------------------------------------------" -ForegroundColor Green
+    Write-Host "-------------------------------- [ DESKTOPS | SCREENSAVER ] ---------------------------------" -ForegroundColor Green
     Invoke-Expression $GetCIM.Trim()
     
+    Write-Host $StatusAExportComplete -ForegroundColor Green -NoNewline
     # Stop transcript
-    Stop-Transcript
+    Stop-Transcript | Out-Null
 }
 
 # VARIABLES B - AppB (Sysmon)
@@ -177,6 +172,7 @@ $UserProfilePath = $($env:userprofile)
     $StatusCCreatedAppCLogFolder = "`n>>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories ..\Desktop\$ParentFolder\Import-Log-Folder ]`n"
     $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to ..\Desktop\$ParentFolder\$Hostname-Evtx-Logs ]`n"
+    $StatusAExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to ..\Desktop\$ParentFolder\$Hostname-Host-Info ]`n"
     $DeepBlueExecute = ".\DeepBlue.ps1"
     $LogPathExportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
     $LogPathImportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder"
