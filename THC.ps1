@@ -1,6 +1,6 @@
  
 #(go down to execution line)
-
+##Good quick info, implement later for hunters  https://mahim-firoj.medium.com/incident-response-and-threat-hunting-using-deepbluecli-tool-bf5d4c52c8a8
 
 # VARIABLES - BANNERS
 $Banner= @"
@@ -1077,10 +1077,11 @@ function AppCWipe {
             if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder") {
                 set-location "$($UserProfilePath)\Desktop\$ParentFolder"
                 Remove-Item -Recurse -Force "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
+                Show-Menu
                 }
         } 
         'No' {
-            Show-Menu
+            AppCMenuMain
         }
     }
     pause
