@@ -1081,7 +1081,7 @@ function AppCWipe {
                 }
         } 
         'No' {
-            AppCMenuMain
+            DBCLIMenuMain
         }
     }
     pause
