@@ -121,6 +121,7 @@ $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
         $IPAddress= $env:HostIP = (Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.Status -ne "Disconnected"}).IPv4Address.IPAddress
     $GetVolume = "Get-Volume | Select-Object @{Name='Drive';Expression='DriveLetter'}, FileSystemLabel, @{Name='Free `(GB`)';Expression={[math]::Round(`$_.SizeRemaining / 1GB, 2)}}, @{Name='Size `(GB`)';Expression={[math]::Round(`$_.Size / 1GB, 2)}}, @{Name='Type';Expression='FileSystemType'}, @{Name='Mount';Expression='DriveType'}, @{Name='Health';Expression='HealthStatus'},@{Name='Status';Expression='OperationalStatus'}| Format-Table -Wrap | Out-String"
     $GetCIM = "Get-CimInstance -ClassName Win32_Desktop | Select-Object @{Name='Name | ScreenSaver ------->';Expression='Name'}, @{Name='Active';Expression='ScreenSaverActive'}, @{Name='Secure';Expression='ScreenSaverSecure'}, @{Name='Timeout';Expression='ScreenSaverTimeout'}| Format-Table -Wrap | Out-String"
+    $StatusAExportComplete = "`n>>>>>>>>>>> [ Exported raw logs to $UserDesktopPath\$ParentFolder\$Hostname-Host-Info ]`n"
 
 # FUNCTION A
     function HostInfo {
@@ -156,7 +157,7 @@ $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
     Write-Host "-------------------------------- [ DESKTOPS | SCREENSAVER ] ---------------------------------" -ForegroundColor Green
     Invoke-Expression $GetCIM.Trim()
     
-    Write-Host $StatusAExportComplete -ForegroundColor Green -NoNewline
+    Write-Host $StatusAExportComplete -ForegroundColor Yellow
     # Stop transcript
     Stop-Transcript | Out-Null
 }
@@ -190,8 +191,7 @@ $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
     $StatusCLoading = ">>>>>>>>>> [ Retrieving Data... ]`n"
     $StatusCCreatedAppCLogFolder = "`n>>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
-    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
-    $StatusAExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to $UserDesktopPath\$ParentFolder\$Hostname-Host-Info ]`n"
+    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported raw logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
     $DeepBlueExecute = ".\DeepBlue.ps1"
     $LogPathExportFolder = "$UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs"
     $LogPathImportFolder = "$UserDesktopPath\$ParentFolder\Import-Log-Folder"
@@ -241,11 +241,11 @@ $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
     |                                   |
     | [Security]    | $($global:LogCountImportSecurity.Count) Records
     | [System]      | $($global:LogCountImportSystem.Count) Records
-    | [Application] |  Records
-    | [AppLocker]   |  Records
-    | [Powershell]  |  Records
-    | [Sysmon]      |  Records
-    | [WMI]         |  Records
+    | [Application] | $($global:LogCountImportApplication.Count) Records
+    | [AppLocker]   | $($global:LogCountImportAppLocker.Count) Records
+    | [Powershell]  | $($global:LogCountImportPowershell.Count) Records
+    | [Sysmon]      | $($global:LogCountImportSysmon.Count) Records
+    | [WMI]         | $($global:LogCountImportWMI.Count) Records
     | [All]         | Filters all logs  |
     | [Help]        | Syntax & Paths    |
     | [Back]        | Back to Main Menu |
@@ -376,17 +376,33 @@ function RunImport{
     # Create export log directory and notify path
     $null = new-item -path "$UserDesktopPath\$ParentFolder" -name "Import-Log-Folder" -itemtype directory -Force
     Write-Host $StatusCCreatedAppCImportLogFolder
-    Write-Host ">>>>>>>>> [ DeepBlue will assume unchanged default evtx file names ] `n`n`n`n"
-    Write-Host ">>>>>>>>>> [ IMPORT EVTX FILES TO `"Import-Log-Folder`" (DO NOT CHANGE FILENAMES), then run your input]" -ForegroundColor Yellow
-     
+    Write-Host ">>>>>>>>> [ DeepBlue will assume unchanged default evtx file names ] `n"
+    Write-Host ">>>>>>>>>> [ DROP EXTERNAL EVTX FILES TO `"Import-Log-Folder`", DO NOT CHANGE FILENAMES ]`n`n`n" -ForegroundColor Yellow
+    Write-Host "                                       Press enter to continue...                                       `n`n" -ForegroundColor Yellow
+    
+    # Give user time to import file to the import folder, wait for the user to press Enter
+    Read-Host
+    # Notify user that this will take a long time..and it will..These global variables can be commented to remove this wait time but you won't get the record count.
+    Write-Host "                            Checking record count, this can take a long time...                                       " -ForegroundColor Yellow
+
+    # This part does the record count for Import Menu
+    $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$LogPathImportSecurity`" -MaxEvents 500000"
+    #$global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\System.evtx`" -MaxEvents 500000"
+    #$global:LogCountImportApplication = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Application.evtx`" -MaxEvents 500000"
+    $global:LogCountImportAppLocker = Invoke-expression "get-winevent -Path `"$LogPathImportAppLocker`" -MaxEvents 500000"
+    #$global:LogCountImportPowerShell = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-PowerShell%4Operational.evtx`" -MaxEvents 500000"
+   # $global:LogCountImportSysmon = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx`" -MaxEvents 500000"
+    #$global:LogCountImportWMI = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-WMI-Activity%4Operational.evtx`" -MaxEvents 500000"
+
     do
     {
-        # RunImportRecordCount
         ##showmenu
         $selectionImport = Read-Host $AppCMenuImportMain "Imported main menu, Waiting for your input"
         switch ($selectionImport)
         {
             'Security' {
+                clear
+                Write-Host $BannerC
                 $global:LogTarget = "Imported Security"
                 $global:LogType = $LogPathImportSecurity
                 $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
@@ -417,11 +433,11 @@ function RunImport{
                         RunDeepBlueImported
                         }
                     'Records'{
-                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Yes/No)"
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
                         switch ($selection3Import)
                         {
-                            'Yes'{RunImportRecordCount($LogTarget)} 
-                            'No'{AppCMenuImportMain}
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
                         }
                     }
                     'Help' {
@@ -436,6 +452,8 @@ function RunImport{
                 pause
             }
             'System' {
+                clear
+                Write-Host $BannerC
                 $global:LogTarget = "Imported System"
                 $global:LogType = $LogPathImportSystem
                 $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
@@ -466,11 +484,11 @@ function RunImport{
                         RunDeepBlueImported
                         }
                     'Records'{
-                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Yes/No)"
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
                         switch ($selection3Import)
                         {
-                            'Yes'{RunImportRecordCount($LogTarget)} 
-                            'No'{AppCMenuImportMain}
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
                         }
                     }
                     'Help' {
@@ -483,7 +501,7 @@ function RunImport{
                         } 
                 }
                 pause
-            } 
+            }
             'Application' {
             #Applicationflow
             } 
@@ -543,10 +561,7 @@ function ExportLog($LogType){
         'WMI' {Copy-Item -Path $LogPathWMI -Destination "$LogPathExportFolder"}
     }
     # Notify user that the export is complete
-    function global:StatusCReportExportComplete{
-        Write-Host $StatusCExportComplete -ForegroundColor Yellow
-        }
-    StatusCReportExportComplete
+    Write-host $StatusCExportComplete -ForegroundColor Yellow
 }
 
 # DeepBlue Function is called from the DBCLI Submenu grabbing the logtype and logformat requested by the user
@@ -1040,17 +1055,17 @@ function StartDBCLI($Source) {
 function AppCWipe {
      # Confirm from user first, then check for DeepBlue folder, if exists, delete it.
 
-    $selectionAppCWipe = Read-Host "Are you sure you want to remove the $AppCFolder Directory? (Yes/No)"
+    $selectionAppCWipe = Read-Host "Are you sure you want to remove the $AppCFolder Directory? (Y/N)"
     switch ($selectionAppCWipe)
     {
-        'Yes' {
+        'Y' {
             if (Test-Path "$UserDesktopPath\$ParentFolder\$AppCFolder") {
                 set-location "$UserDesktopPath\$ParentFolder"
                 Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppCFolder"
                 Show-Menu
                 }
         } 
-        'No' {
+        'N' {
             DBCLIMenuMain
         }
     }
@@ -1081,17 +1096,17 @@ $AppHDescription = "Delete all THC folder/files, Exits"
 function WipeTHC {
     # Confirm from user first, then check for THC folder, if exists, delete it.
 
-    $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Yes/No)"
+    $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Y/N)"
     switch ($selectionWipeTHC)
     {
-        'Yes' {
+        'Y' {
             if (Test-Path "$UserDesktopPath\$ParentFolder") {
                 set-location "$UserDesktopPath"
                 Remove-Item "$UserDesktopPath\$ParentFolder" -Recurse -Force
                 [System.Environment]::Exit(0)
                 }
         } 
-        'No' {
+        'N' {
             Show-Menu
         }
     }
