@@ -15,10 +15,33 @@ ________________________________________________________________________________
         / /___/ /_/ / /___/ /___/ /___/ /___  / / _/ // /_/ / /|  /              
         \____/\____/_____/_____/_____/\____/ /_/ /___/\____/_/ |_/
 
-                                            Catalyzed with purpose by: Adam Kim
-_________________________________________________________________________________
+                                            Catalyzed with purpose by: Banner OG
+_________________________________________________________________________________`n
+"@ 
 
-"@
+$Banner1of4= @"
+_________________________________________________________________________________
+"@ 
+$Banner2of4= @"
+  ________  ______  _________  ______   __  ____  ___   __________________  _____
+ /_  __/ / / / __ \/ ____/   |/_  __/  / / / / / / / | / /_  __/ ____/ __ \/ ___/
+  / / / /_/ / /_/ / __/ / /| | / /    / /_/ / / / /  |/ / / / / __/ / /_/ /\__ \ 
+ / / / __  / _, _/ /___/ ___ |/ /    / __  / /_/ / /|  / / / / /___/ _, _/___/ / 
+/_/ /_/ /_/_/_|_/_____/_/  |_/_/   _/_/_/_/\____/_/_|_/_/_/_/_____/_/ |_|/____/  
+          / ____/ __ \/ /   / /   / ____/ ____/_  __/  _/ __ \/ | / /            
+         / /   / / / / /   / /   / __/ / /     / /  / // / / /  |/ /             
+        / /___/ /_/ / /___/ /___/ /___/ /___  / / _/ // /_/ / /|  /              
+        \____/\____/_____/_____/_____/\____/ /_/ /___/\____/_/ |_/`n
+"@   
+$Banner3of4= @"
+                                            Catalyzed with purpose by: Adam Kim
+"@   
+
+$Banner4of4= @"
+_________________________________________________________________________________`n
+"@   
+
+
 
 $BannerA = @"
 _________________________________________________________________________________
@@ -27,8 +50,7 @@ ________________________________________________________________________________
                   / /_/ / / / /\__ \ / /     / //  |/ / /_  / / / /
                  / __  / /_/ /___/ // /    _/ // /|  / __/ / /_/ / 
                 /_/ /_/\____//____//_/    /___/_/ |_/_/    \____/   
-_________________________________________________________________________________
-
+_________________________________________________________________________________`n
 "@
 
 $BannerB = @"
@@ -38,8 +60,7 @@ ________________________________________________________________________________
                       \__ \  \  /\__ \/ /|_/ / / / /  |/ / 
                      ___/ /  / /___/ / /  / / /_/ / /|  /  
                     /____/  /_//____/_/  /_/\____/_/ |_/
-_________________________________________________________________________________
-
+_________________________________________________________________________________`n
 "@
 
 $BannerC = @"
@@ -49,8 +70,7 @@ ________________________________________________________________________________
       / / / / __/ / __/ / /_/ /  / __  / /   / / / / __/    / /   / /    / /  
      / /_/ / /___/ /___/ ____/  / /_/ / /___/ /_/ / /___   / /___/ /____/ /   
     /_____/_____/_____/_/      /_____/_____/\____/_____/   \____/_____/___/
-_________________________________________________________________________________
-
+_________________________________________________________________________________`n
 "@
 
 $BannerD = @"
@@ -60,8 +80,7 @@ ________________________________________________________________________________
                   / /| |/ / / / / / / / / / /_/ / / / /  |/ /\__ \ 
                  / ___ / /_/ / / / / /_/ / _, _/ /_/ / /|  /___/ / 
                 /_/  |_\____/ /_/  \____/_/ |_|\____/_/ |_//____/
-_________________________________________________________________________________
-
+_________________________________________________________________________________`n
 "@
 
 $BannerE = @"
@@ -71,8 +90,7 @@ ________________________________________________________________________________
              / /     / /  / /    \__ \/ __/ / /| | / /_/ / /   / /_/ / 
             / /___  / / _/ /    ___/ / /___/ ___ |/ _, _/ /___/ __  /  
             \____/ /_/ /___/   /____/_____/_/  |_/_/ |_|\____/_/ /_/
-_________________________________________________________________________________
-
+_________________________________________________________________________________`n
 "@
 
 $BannerX = @"
@@ -82,8 +100,7 @@ ________________________________________________________________________________
                  / /   / / / /  |/ / / / / /| |/ /     / /   
                 / /___/ /_/ / /|  / / / / ___ / /___  / /    
                 \____/\____/_/ |_/ /_/ /_/  |_\____/ /_/
-_________________________________________________________________________________
-
+_________________________________________________________________________________`n
 "@
 
 
@@ -93,6 +110,7 @@ $HealthCheck = "False"
 # VARIABLES - ParentFolder
 $ParentFolder = "Threat Hunters Collection"
 $UserProfilePath = $($env:userprofile)
+$UserDesktopPath = [Environment]::GetFolderPath("Desktop")
 
 # VARIABLES A - AppA (Host Info)
     $AppAName = "Host Info"
@@ -110,7 +128,7 @@ $UserProfilePath = $($env:userprofile)
     Clear
     
     # Start transcript to capture all output, appends info if tracking changes.
-    Start-Transcript -Path "$env:USERPROFILE\Desktop\$ParentFolder\$Hostname-Host-Info.txt" -Append | Out-Null
+    Start-Transcript -Path "$UserDesktopPath\$ParentFolder\$Hostname-Host-Info.txt" -Append | Out-Null
     
     # Welcome BannerAppA
     Write-Host $BannerA
@@ -124,6 +142,7 @@ $UserProfilePath = $($env:userprofile)
     # Notify hostname & IP address
     Write-Host "[Hostname]: $Hostname"
     Write-Host "[Profile]: $UserProfilePath"
+    Write-Host "[Desktop Path]: $UserDesktopPath"
     Write-Host "[IP Address]: $IPAddress" -NoNewline
     
     # More PC Info
@@ -159,23 +178,23 @@ $UserProfilePath = $($env:userprofile)
     $AppCHashMirror = "9B0BA2CE0752AE68C0AE8553AD14E46590A6745F9B7EAA085E20C2363B9D4CA9"
 
     # VARIABLES C - Status notifications
-    $StatusCCreatedAppCFolder = "> [ Adding new directories ..\Desktop\$ParentFolder\$AppCFolder ]`n"
+    $StatusCCreatedAppCFolder = "> [ Adding new directories $UserDesktopPath\$ParentFolder\$AppCFolder ]`n"
     $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to ..\$AppCFolder ]`n"
     $StatusCCheckAndRemoveExisting = ">>> [ Removing any existing DeepBlue files ]`n"
     $StatusCDownloadApp = ">>>> [ Downloading `"$AppCName`" ]`n"
     $StatusCHashCheck = ">>>>> [ Checking hash ]`n"
     $StatusCExtractedApp = ">>>>>> [ Extracted `"$AppCName`" ]`n"
     $StatusCRemoveDownload =  ">>>>>>> [ Removed downloaded files for `"$AppCName`" ]`n"
-    $StatusCChangedDirToAppFolder = ">>>>>>>> [ You are in the ..\Desktop\$ParentFolder\$AppCFolder ]`n"
+    $StatusCChangedDirToAppFolder = ">>>>>>>> [ You are in the $UserDesktopPath\$ParentFolder\$AppCFolder ]`n"
     $StatusCReady = ">>>>>>>>> [ Ready for Hunting... ]`n"
     $StatusCLoading = ">>>>>>>>>> [ Retrieving Data... ]`n"
     $StatusCCreatedAppCLogFolder = "`n>>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
-    $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories ..\Desktop\$ParentFolder\Import-Log-Folder ]`n"
-    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to ..\Desktop\$ParentFolder\$Hostname-Evtx-Logs ]`n"
-    $StatusAExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to ..\Desktop\$ParentFolder\$Hostname-Host-Info ]`n"
+    $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
+    $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
+    $StatusAExportComplete = "`n>>>>>>>>>>> [ Exported Raw Logs to $UserDesktopPath\$ParentFolder\$Hostname-Host-Info ]`n"
     $DeepBlueExecute = ".\DeepBlue.ps1"
-    $LogPathExportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\$Hostname-Evtx-Logs"
-    $LogPathImportFolder = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder"
+    $LogPathExportFolder = "$UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs"
+    $LogPathImportFolder = "$UserDesktopPath\$ParentFolder\Import-Log-Folder"
     $LogPathSecurity = "C:\Windows\System32\winevt\Logs\Security.evtx"
     $LogPathSystem = "C:\Windows\System32\winevt\Logs\System.evtx"
     $LogPathApplication = "C:\Windows\System32\winevt\Logs\Application.evtx"
@@ -183,13 +202,13 @@ $UserProfilePath = $($env:userprofile)
     $LogPathPowerShell = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx"
     $LogPathSysmon = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
     $LogPathWMI = "C:\Windows\System32\winevt\Logs\Microsoft-Windows-WMI-Activity%4Operational.evtx"
-    $LogPathImportSecurity = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Security.evtx"
-    $LogPathImportSystem = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\System.evtx"
-    $LogPathImportApplication = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Application.evtx"
-    $LogPathImportAppLocker = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-AppLocker%4EXE and DLL.evtx"
-    $LogPathImportPowerShell = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-PowerShell%4Operational.evtx"
-    $LogPathImportSysmon = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx"
-    $LogPathImportWMI = "$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Microsoft-Windows-WMI-Activity%4Operational.evtx"
+    $LogPathImportSecurity = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\Security.evtx"
+    $LogPathImportSystem = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\System.evtx"
+    $LogPathImportApplication = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\Application.evtx"
+    $LogPathImportAppLocker = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-AppLocker%4EXE and DLL.evtx"
+    $LogPathImportPowerShell = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-PowerShell%4Operational.evtx"
+    $LogPathImportSysmon = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx"
+    $LogPathImportWMI = "$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-WMI-Activity%4Operational.evtx"
     $PipeList = "|Format-List"
     $PipeTable = "|Format-Table"
     $PipeGrid = "|Out-GridView"
@@ -205,10 +224,10 @@ $UserProfilePath = $($env:userprofile)
     |                                |
     | *[List]  | Format-List view    |
     | *[Table] | Format-Table view   |
-    | *[Grid]- | Out-GridView view   |
-    |  [HTML] -| ConvertTo-Html view |
-    |  [JSON] -| ConvertTo-Json view |
-    |  [XML]  -| ConvertTo-Xml view  |
+    | *[Grid]  | Out-GridView view   |
+    |  [HTML]  | ConvertTo-Html view |
+    |  [JSON]  | ConvertTo-Json view |
+    |  [XML]   | ConvertTo-Xml view  |
     |  [Records]| Get $global:LogTarget Count (This can take a long time)  |
     |  [Help]  |  Syntax & Paths     |
     |  [Back]  | Back to Main Menu   |
@@ -334,12 +353,12 @@ function RunImportRecordCount($LogTarget){
     Write-Host ">>>>>>>>>> [ Counting records in $LogTarget log ]`n"
     
     if ($LogTarget -eq "Imported Security"){
-    $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\Security.evtx`" -MaxEvents 1000000"
+    $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Security.evtx`" -MaxEvents 1000000"
     $ImportRecordCount = $global:LogCountImportSecurity.Count
     }
 
     if ($LogTarget -eq "Imported System"){
-    $global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$($UserProfilePath)\Desktop\$ParentFolder\Import-Log-Folder\System.evtx`" -MaxEvents 1000000"
+    $global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\System.evtx`" -MaxEvents 1000000"
     $ImportRecordCount = $global:LogCountImportSystem.Count
     }
 
@@ -355,10 +374,10 @@ function RunImport{
     Write-Host $BannerC
     
     # Create export log directory and notify path
-    $null = new-item -path "$($UserProfilePath)\Desktop\$ParentFolder" -name "Import-Log-Folder" -itemtype directory -Force
+    $null = new-item -path "$UserDesktopPath\$ParentFolder" -name "Import-Log-Folder" -itemtype directory -Force
     Write-Host $StatusCCreatedAppCImportLogFolder
-    Write-Host ">>>>>>>>> [ DeepBlue will assume unchanged default evtx file names ] `n"
-    Write-Host ">>>>>>>>>> [ Import evtx files to the `"Import-Log-Folder`", then run your command] `n"
+    Write-Host ">>>>>>>>> [ DeepBlue will assume unchanged default evtx file names ] `n`n`n`n"
+    Write-Host ">>>>>>>>>> [ IMPORT EVTX FILES TO `"Import-Log-Folder`" (DO NOT CHANGE FILENAMES), then run your input]" -ForegroundColor Yellow
      
     do
     {
@@ -504,8 +523,8 @@ function ExportLog($LogType){
 
     # Create export log directory and notify path
     function global:CreateLogFolder{
-        $null = new-item -path "$($UserProfilePath)\Desktop\$ParentFolder" -name "$Hostname-Evtx-Logs" -itemtype directory -Force
-        Write-Host $StatusCCreatedAppCLogFolder
+        $null = new-item -path "$UserDesktopPath\$ParentFolder" -name "$Hostname-Evtx-Logs" -itemtype directory -Force
+        Write-Host $StatusCCreatedAppCLogFolder -ForegroundColor Yellow
         }
     CreateLogFolder
 
@@ -525,7 +544,7 @@ function ExportLog($LogType){
     }
     # Notify user that the export is complete
     function global:StatusCReportExportComplete{
-        Write-Host $StatusCExportComplete
+        Write-Host $StatusCExportComplete -ForegroundColor Yellow
         }
     StatusCReportExportComplete
 }
@@ -950,11 +969,11 @@ function StartDBCLI($Source) {
     }
 
     # Create the ParentAppCFolder in ParentFolder (Also hiding the Powershell Output)
-    $null = new-item -path "$($UserProfilePath)\Desktop" -name $ParentFolder -itemtype directory -Force
+    $null = new-item -path "$UserDesktopPath" -name $ParentFolder -itemtype directory -Force
     Write-Host $StatusCCreatedAppCFolder -ForegroundColor Green
 
     # Change the directory to ParentAppCFolder
-    set-location "$($UserProfilePath)\Desktop\$ParentFolder"
+    set-location "$UserDesktopPath\$ParentFolder"
     Write-Host $StatusCChangedDirToAppCFolder -ForegroundColor Green
 
     # Check existing DeepBlue folder, if exist, we delete to get a new untampered copy.
@@ -1007,7 +1026,7 @@ function StartDBCLI($Source) {
         Write-Host $StatusCRemoveDownload -ForegroundColor Green
     
     # Change the directory to AppCName
-    set-location "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
+    set-location "$UserDesktopPath\$ParentFolder\$AppCFolder"
     Write-Host $StatusCChangedDirToAppFolder -ForegroundColor Green
 
     # Check if staging and initialization is complete
@@ -1025,9 +1044,9 @@ function AppCWipe {
     switch ($selectionAppCWipe)
     {
         'Yes' {
-            if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder") {
-                set-location "$($UserProfilePath)\Desktop\$ParentFolder"
-                Remove-Item -Recurse -Force "$($UserProfilePath)\Desktop\$ParentFolder\$AppCFolder"
+            if (Test-Path "$UserDesktopPath\$ParentFolder\$AppCFolder") {
+                set-location "$UserDesktopPath\$ParentFolder"
+                Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppCFolder"
                 Show-Menu
                 }
         } 
@@ -1066,9 +1085,9 @@ function WipeTHC {
     switch ($selectionWipeTHC)
     {
         'Yes' {
-            if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder") {
-                set-location "$($UserProfilePath)\Desktop"
-                Remove-Item "$($UserProfilePath)\Desktop\$ParentFolder" -Recurse -Force
+            if (Test-Path "$UserDesktopPath\$ParentFolder") {
+                set-location "$UserDesktopPath"
+                Remove-Item "$UserDesktopPath\$ParentFolder" -Recurse -Force
                 [System.Environment]::Exit(0)
                 }
         } 
@@ -1118,10 +1137,9 @@ $ExitHard = "[System.Environment]::Exit(0)"
 
 # MainMenu ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $MenuMain = @" 
-$Banner
        [*] Double letter will use mirror if main source is down `n
        [A] $AppAName - $AppADescription
-      [B*] $AppBName - $AppBDescription
+      [B*] $AppBName - $AppBDescription 
       [C*] $AppCName - $AppCDescription
        [D] $AppDName - $AppDDescription
        [E] $AppEName - $AppEDescription
@@ -1138,6 +1156,10 @@ $Banner
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Show-Menu {
     Clear-Host
+    Write-Host $Banner1of4 
+    Write-Host $Banner2of4 -ForegroundColor Yellow
+    Write-Host $Banner3of4 -ForegroundColor Cyan
+    Write-Host $Banner4of4 
     Write-Host $MenuMain
 }
 do
