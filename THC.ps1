@@ -336,7 +336,7 @@ $UserProfilePath = $($env:userprofile)
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "Contact"
     $AppXDescription = "More Info & Contact"
-    $DiscordLink = "https://discord.gg/tQn4SWDG"
+    $DiscordLink = "https://discord.gg/HXNprdRD"
     $GithubLink = "https://github.com/resv"
     $EmailLink = "info@atomkim.com"
     $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
@@ -344,11 +344,12 @@ $UserProfilePath = $($env:userprofile)
 # VARIABLES - AppZ (Exit and keep CLI Open)
     $AppZName = "Soft Exit"
     $AppZDescription = "Exit THC and keep shell open"
+    $ExitSoft = "exit"
 
 # VARIABLES - AppZZ
     $AppZZName = "Hard Exit"
     $AppZZDescription = "Exit THC and close shell"
-
+    $ExitHard = "[System.Environment]::Exit(0)"
 # MainMenu
 $MenuMain = @" 
 $Banner
@@ -962,10 +963,8 @@ function DBCLIMenuMain{
                 Write-Host $BannerC
                 Write-Host $DBCLIHelp                    
                 }
-                'Exit' {
-                Write-Host "placeholder used for exit but we will invoke $ ExportEvtxSysmonLog an encapped function for testing"
-                ExportEvtxSysmonLog
-                Write-Host "If this export was successfully you should see this text <<<<< also check folder..."
+                'Hard Exit' {
+                Invoke-Expression $ExitHard
                 }
                 'Wipe' {
                 AppCWipe
@@ -1154,10 +1153,10 @@ do
         'Contact'
         }
         'Z' {
-        exit
+        Invoke-Expression $ExitSoft
         }
         'ZZ' {
-        [System.Environment]::Exit(0)
+        Invoke-Expression $ExitHard
         }
     }
     pause
