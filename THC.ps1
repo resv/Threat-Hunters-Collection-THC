@@ -149,7 +149,7 @@ $UserProfilePath = $($env:userprofile)
 
 # VARIABLES C - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
-    $AppCDescription = "Get $AppCName from offical repo, extract to desktop, remove zip"
+    $AppCDescription = "Get $AppCName, extract, remove zip"
     $AppCFolder = "DeepBlueCLI"
         # URLs
         $AppCURLMain = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
@@ -313,76 +313,6 @@ $UserProfilePath = $($env:userprofile)
                 | [Exported Logs] "..\Desktop\Threat Hunters Collection\"Hostname"-Evtx-Logs" |
                 |_____________________________________________________________________________|
 `n
-"@
-
-# VARIABLES - AppCC (DBCLI BACKUP URL)
-    $AppDName = "PlaceHolder"
-    $AppDDescription = "PlaceHolder"
-
-# VARIABLES - AppE (placeholder)
-    $AppEName = "placeholder"
-    $AppEDescription = "placeholder"
-
-# VARIABLES - AppF (Autoruns)
-    $AppFName = "Autoruns"
-    $AppFDescription = "Scheduled tasks/persistence checker"
-
-# VARIABLES - AppG (CTI Search Online Reputation Search)
-    $AppGName = "CTI Search"
-    $AppGDescription = "Online Reputation Searcher"
-
-# VARIABLES - AppH (Wipe THC from endpoint)
-    $AppHName = "Wipe THC & Exit"
-    $AppHDescription = "Delete all THC folder/files, Exits"
-
-# VARIABLES - AppX (More Info & Contact)
-    $AppXName = "Contact"
-    $AppXDescription = "More Info & Contact"
-    $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
-    $DiscordLink = "https://discord.gg/HXNprdRD"
-    $GithubLink = "https://github.com/resv"
-    $EmailLink = "info@atomkim.com"
-    
-
-$AppXContact = @" 
-$BannerX
-
-For my hunters, I hope this brings you value. If you want to suggest, contribute, collaborate please reach out! `n
-    [Linkedin] $LinkedinLink
-    [Discord] $DiscordLink 
-    [GitHub] $GithubLink
-    [Email] $EmailLink
-
-    Credits:
-    [DeepBlueCLI] Eric Conrad https://www.ericconrad.com/
-    [Microsoft] Sysmon, Autoruns, Powershell
-"@
-
-# VARIABLES - AppZ (Exit and keep CLI Open)
-    $AppZName = "Soft Exit"
-    $AppZDescription = "Exit THC and keep shell open"
-    $ExitSoft = "exit"
-
-# VARIABLES - AppZZ
-    $AppZZName = "Hard Exit"
-    $AppZZDescription = "Exit THC and close shell"
-    $ExitHard = "[System.Environment]::Exit(0)"
-
-# MainMenu
-$MenuMain = @" 
-$Banner
-  [Main/Mirror] Use mirror if main is down `n
-     [A] $AppAName - $AppADescription
-  [B/BB] $AppBName - $AppBDescription
-  [C/CC] $AppCName - $AppCDescription
-     [D] $AppDName - $AppDDescription
-     [E] $AppEName - $AppEDescription
-  [F/FF] $AppFName - $AppFDescription
-     [G] $AppGName - $AppGDescription
-     [H] $AppHName - $AppHDescription
-     [X] $AppXName - $AppXDescription
-     [Z] $AppZName - $AppZDescription
-    [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
 # Stores Record Count in variable to use and display on the AppC Menu Main
@@ -1109,6 +1039,26 @@ function AppCWipe {
  }
  until ($selection -eq 'back')
 
+# VARIABLES - AppD (PlaceHolder) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppDName = "PlaceHolder"
+$AppDDescription = "PlaceHolder"
+
+# VARIABLES - AppE (placeholder) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppEName = "placeholder"
+$AppEDescription = "placeholder"
+
+# VARIABLES - AppF (Autoruns) ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppFName = "Autoruns"
+$AppFDescription = "Scheduled tasks/persistence checker" 
+
+# VARIABLES - AppG (CTI Search Online Reputation Search) -----------------------------------------------------------------------------------------------------------------------------------------------------
+$AppGName = "CTI Search"
+$AppGDescription = "Online Reputation Searcher"
+
+# VARIABLES - AppH (Wipe THC from endpoint) ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppHName = "Wipe THC & Exit"
+$AppHDescription = "Delete all THC folder/files, Exits"
+
 function WipeTHC {
     # Confirm from user first, then check for THC folder, if exists, delete it.
 
@@ -1129,10 +1079,63 @@ function WipeTHC {
     pause
  }
  until ($selection -eq 'back')
+   
+
+# VARIABLES - AppX (More Info & Contact) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppXName = "Contact"
+$AppXDescription = "More Info & Contact"
+
+$AppXContact = @" 
+$BannerX
+(All Mirrors are direct copies from official sources and hosted on my github. You may have to use a mirror if the main source is down or if they have updated their app/URL)`n
+
+For my hunters, I hope this brings you value. If you want to suggest, contribute, collaborate please reach out! `n
+
+     ___________________[ ADAM KIM ]_____________________
+    |                                                    |
+    | [Linkedin] https://www.linkedin.com/in/adamkim456/ |
+    | [Discord]  https://discord.gg/HXNprdRD             |
+    | [GitHub]   https://github.com/resv                 |
+    | [Email]    info@atomkim.com                        |
+    |____________________________________________________|`n
+
+     ____________________[ CREDITS ]________________________
+    |                                                       |
+    | [DeepBlueCLI] Eric Conrad https://www.ericconrad.com/ |
+    | [Microsoft] Sysmon, Autoruns, Powershell              |
+    |_______________________________________________________|`n
+"@
+
+# VARIABLES - AppZ (Exit and keep CLI Open) -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppZName = "Soft Exit"
+$AppZDescription = "Exit THC and keep shell open"
+$ExitSoft = "exit"
+
+# VARIABLES - AppZZ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppZZName = "Hard Exit"
+$AppZZDescription = "Exit THC and close shell"
+$ExitHard = "[System.Environment]::Exit(0)"
+
+# MainMenu ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$MenuMain = @" 
+$Banner
+       [*] Double letter will use mirror if main source is down `n
+       [A] $AppAName - $AppADescription
+      [B*] $AppBName - $AppBDescription
+      [C*] $AppCName - $AppCDescription
+       [D] $AppDName - $AppDDescription
+       [E] $AppEName - $AppEDescription
+      [F*] $AppFName - $AppFDescription
+       [G] $AppGName - $AppGDescription
+       [H] $AppHName - $AppHDescription
+       [X] $AppXName - $AppXDescription
+       [Z] $AppZName - $AppZDescription
+      [ZZ] $AppZZName - $AppZZDescription `n
+"@
 
 
 # Execution starts here:
-# -------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Show-Menu {
     Clear-Host
     Write-Host $MenuMain
