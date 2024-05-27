@@ -315,9 +315,8 @@ $UserProfilePath = $($env:userprofile)
 `n
 "@
 
-# VARIABLES - AppD (DBCLI BACKUP URL)
-    $AppDName = "DeepBlueCLI Mirror"
-    $AppDDescription = "Get $AppCName from mirror repo, extract to desktop, remove zip"
+# VARIABLES - AppCC (DBCLI BACKUP URL)
+    $AppDDescription = "PlaceHolder"
 
 # VARIABLES - AppE (placeholder)
     $AppEName = "placeholder"
@@ -338,10 +337,25 @@ $UserProfilePath = $($env:userprofile)
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "Contact"
     $AppXDescription = "More Info & Contact"
+    $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
     $DiscordLink = "https://discord.gg/HXNprdRD"
     $GithubLink = "https://github.com/resv"
     $EmailLink = "info@atomkim.com"
-    $LinkedinLink = "https://www.linkedin.com/in/adamkim456/"
+    
+
+$AppXContact = @" 
+$BannerX
+
+For my hunters, I hope this brings you value. If you want to suggest, contribute, collaborate please reach out! `n
+    [Linkedin] $LinkedinLink
+    [Discord] $DiscordLink 
+    [GitHub] $GithubLink
+    [Email] $EmailLink
+
+    Credits:
+    [DeepBlueCLI] Eric Conrad https://www.ericconrad.com/
+    [Microsoft] Sysmon, Autoruns, Powershell
+"@
 
 # VARIABLES - AppZ (Exit and keep CLI Open)
     $AppZName = "Soft Exit"
@@ -352,20 +366,22 @@ $UserProfilePath = $($env:userprofile)
     $AppZZName = "Hard Exit"
     $AppZZDescription = "Exit THC and close shell"
     $ExitHard = "[System.Environment]::Exit(0)"
+
 # MainMenu
 $MenuMain = @" 
 $Banner
-  [A] $AppAName - $AppADescription
-  [B] $AppBName - $AppBDescription
-  [C] $AppCName - $AppCDescription
-  [D] $AppDName - $AppDDescription
-  [E] $AppEName - $AppEDescription
-  [F] $AppFName - $AppFDescription
-  [G] $AppGName - $AppGDescription
-  [H] $AppHName - $AppHDescription
-  [X] $AppXName - $AppXDescription
-  [Z] $AppZName - $AppZDescription
- [ZZ] $AppZZName - $AppZZDescription `n
+  [Main/Mirror] Use mirror if main is down `n
+     [A] $AppAName - $AppADescription
+  [B/BB] $AppBName - $AppBDescription
+  [C/CC] $AppCName - $AppCDescription
+     [D] $AppDName - $AppDDescription
+     [E] $AppEName - $AppEDescription
+  [F/FF] $AppFName - $AppFDescription
+     [G] $AppGName - $AppGDescription
+     [H] $AppHName - $AppHDescription
+     [X] $AppXName - $AppXDescription
+     [Z] $AppZName - $AppZDescription
+    [ZZ] $AppZZName - $AppZZDescription `n
 "@
 
 # Stores Record Count in variable to use and display on the AppC Menu Main
@@ -1137,7 +1153,7 @@ do
         StartDBCLI($Source)
         
         } 
-        'D' {
+        'CC' {
         $global:Source = "MIRROR SOURCE"
         StartDBCLI($Source)
         
@@ -1155,7 +1171,8 @@ do
         WipeTHC
         }
         'X' {
-        'Contact'
+            Clear-Host
+            Write-Host $AppXContact     
         }
         'Z' {
         Invoke-Expression $ExitSoft
