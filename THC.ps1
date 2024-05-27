@@ -237,18 +237,19 @@ $UserProfilePath = $($env:userprofile)
     $AppCMenuSub = @"
     `n
            $global:LogTarget ($LogCount)
-     _____[ DEEPBLUECLI SUB MENU ]_____
-    |                                  |
-    | *[List]   | Format-List view     |
-    | *[Table]  | Format-Table view    |
-    | *[Grid]   | Out-GridView view    |
-    |  [HTML]   | ConvertTo-Html view  |
-    |  [JSON]   | ConvertTo-Json view  |
-    |  [XML]    | ConvertTo-Xml view   |
-    |  [Help]   | Syntax & Paths       |
-    |  [Export] | Export Logs          |
-    |  [Back]   | Back to Main Menu    |
-    |__________________________________|`n `n
+     _______[ DEEPBLUECLI SUB MENU ]______
+    |                                     |
+    | *[List]      | Format-List view     |
+    | *[Table]     | Format-Table view    |
+    | *[Grid]      | Out-GridView view    |
+    |  [HTML]      | ConvertTo-Html view  |
+    |  [JSON]      | ConvertTo-Json view  |
+    |  [XML]       | ConvertTo-Xml view   |
+    |  [Help]      | Syntax & Paths       |
+    |  [Export]    | Export Logs          |
+    |  [Exit]      | Hard Exit            |
+    |  [Back]      | Back to Main Menu    |
+    |_____________________________________|`n `n
 "@
 
     # AppCMenuMain
@@ -268,6 +269,7 @@ $UserProfilePath = $($env:userprofile)
     | [Export]      | Export all logs   |
     | [Help]        | Syntax & Paths    |
     | [Wipe]        | Wipe DeepBlueCLI  |
+    | [Exit]        | Hard Exit         |
     | [Back]        | Back to Main Menu |
     |___________________________________|`n `n
 "@
@@ -673,7 +675,10 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            Invoke-Expression $ExitHard     
+                            }                
                         'Back' {
                             AppCMenuMain
                             } 
@@ -944,7 +949,7 @@ function DBCLIMenuMain{
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
                             }        
-                        'BBack' {
+                        'Back' {
                             AppCMenuMain
                             } 
                     }
@@ -963,7 +968,7 @@ function DBCLIMenuMain{
                 Write-Host $BannerC
                 Write-Host $DBCLIHelp                    
                 }
-                'Hard Exit' {
+                'Exit' {
                 Invoke-Expression $ExitHard
                 }
                 'Wipe' {
