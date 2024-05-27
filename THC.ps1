@@ -316,6 +316,7 @@ $UserProfilePath = $($env:userprofile)
 "@
 
 # VARIABLES - AppCC (DBCLI BACKUP URL)
+    $AppDName = "PlaceHolder"
     $AppDDescription = "PlaceHolder"
 
 # VARIABLES - AppE (placeholder)
