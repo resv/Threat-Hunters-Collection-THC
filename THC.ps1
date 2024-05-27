@@ -330,8 +330,8 @@ $UserProfilePath = $($env:userprofile)
     $AppGDescription = "Online Reputation Searcher"
 
 # VARIABLES - AppH (Wipe THC from endpoint)
-    $AppHName = "Wipe THC"
-    $AppHDescription = "Delete all THC folder/files"
+    $AppHName = "Wipe THC & Exit"
+    $AppHDescription = "Delete all THC folder/files, Exits"
 
 # VARIABLES - AppX (More Info & Contact)
     $AppXName = "Contact"
@@ -1098,6 +1098,7 @@ function WipeTHC {
             if (Test-Path "$($UserProfilePath)\Desktop\$ParentFolder") {
                 set-location "$($UserProfilePath)\Desktop"
                 Remove-Item "$($UserProfilePath)\Desktop\$ParentFolder" -Recurse -Force
+                [System.Environment]::Exit(0)
                 }
         } 
         'No' {
@@ -1153,10 +1154,10 @@ do
         'Contact'
         }
         'Z' {
-        'Soft Exit'
+        exit
         }
         'ZZ' {
-        'Hard Exit'
+        [System.Environment]::Exit(0)
         }
     }
     pause
