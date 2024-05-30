@@ -73,7 +73,7 @@ ________________________________________________________________________________
 _________________________________________________________________________________`n
 "@
 
-$BannerD = @"
+$BannerF = @"
 _________________________________________________________________________________
                     ___   __  ____________  ____  __  ___   _______
                    /   | / / / /_  __/ __ \/ __ \/ / / / | / / ___/
@@ -111,6 +111,8 @@ $HealthCheck = "False"
 $ParentFolder = "Threat Hunters Collection"
 $UserProfilePath = $($env:userprofile)
 $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
+$StatusCreatedParentFolder = "> [ Adding new directories $UserDesktopPath\$ParentFolder ]`n"
+$StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$ParentFolder ]`n"
 
 # VARIABLES A - AppA (Host Info)
     $AppAName = "Host Info"
@@ -1021,7 +1023,7 @@ function StartDBCLI($Source) {
         # Hash Diff Allow/Deny Progression    
         if ($AppCHashUsed -eq $HashDownload){
             $AppCHashValid = "True"
-            Write-Host "              |------------------------- [ HASH VALID ] -----------------------|`n" -ForegroundColor Green
+            Write-Host "              |------------------------ [ HASH VALID ] ------------------------|`n" -ForegroundColor Green
             
         }
         else {
@@ -1084,6 +1086,126 @@ $AppEDescription = "placeholder"
 # VARIABLES - AppF (Autoruns) ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppFName = "Autoruns"
 $AppFDescription = "Scheduled tasks/persistence checker" 
+$AppFName = "Autoruns"
+    $AppFDescription = "Get $AppFName, extract, remove zip"
+    $AppFFolder = "Autoruns"
+        # URLs
+        $AppFURLMain = "https://live.sysinternals.com/autoruns.exe"
+        $AppFURLMirror = "https://github.com/resv/THC-MIRROR-APPS/raw/main/Autoruns/autoruns.exe"
+           
+    $AppFHashMain = "F41051697B220757F3612ECD00749B952CE7BCAADD9DC782D79EF0338E45C3B6"
+    $AppFHashMirror = "9B0BA2CE0752AE68C0AE8553AD14E46590A6745F9B7EAA085E20C2363B9D4CA9"
+
+    # VARIABLES F - Status notifications
+    $StatusFCreatedAppFFolder = "1 [ Adding new directory $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFChangedDirToAppFFolder = "2 [ Changed working directory to ..\$AppFFolder ]`n"
+    $StatusFCheckExisting = "3 [ Detected existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFRemoveExisting = "3 [ Removed existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFDownloadApp = "4 [ Downloading `"$AppFName.exe`" ]`n"
+    $StatusFHashCheck = "5 [ Checking hash ]`n"
+    $StatusFBootUp = "6 [ Booting up `"$AppFName`" ]`n"
+    $StatusFChangedDirToAppFFolder = "7 [ You are in the $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFReady = "8 [ Ready for Hunting... ]`n"
+    $StatusFLoading = "9 [ Retrieving Data... ]`n"
+    $StatusFCreatedAppFLogFolder = "`n10 [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
+    $StatusFCreatedAppFImportLogFolder = "`n11 [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
+    $StatusFExportComplete = "`n12 [ Exported raw logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
+    #$DeepBlueExecute = ".\DeepBlue.ps1"
+    #$LogPathExportFolder = "$UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs"
+    #$LogPathImportFolder = "$UserDesktopPath\$ParentFolder\Import-Log-Folder"
+
+function StartAutoruns($Source) {   
+    #Clear
+    clear
+
+    # Make space for download status bar
+    Write-Host `n`n`n`n`n`n
+
+    # Notify Autoruns Source URL and hash based on request
+     if ($Source -eq "MAIN SOURCE"){
+        Write-Host "[MAIN SOURCE]: " -ForegroundColor Green -NoNewline; Write-Host $AppFURLMain -ForegroundColor Yellow
+        Write-Host "    [SHA-256]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppFHashMain}" -ForegroundColor Yellow `n 
+    }
+    if ($Source -eq "MIRROR SOURCE"){
+        Write-Host "[MIRROR SOURCE]: " -ForegroundColor Green -NoNewline; Write-Host $AppFURLMirror -ForegroundColor Yellow
+        Write-Host "      [SHA-256]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppFHashMirror}" -ForegroundColor Yellow `n
+    }
+
+    # Create the in ParentFolder (Also hiding the Powershell Output)
+    $null = new-item -path "$UserDesktopPath" -name $ParentFolder -itemtype directory -Force
+    Write-Host $StatusCreatedParentFolder -ForegroundColor Green
+
+    # Change the directory to ParentFolder
+    set-location "$UserDesktopPath\$ParentFolder"
+    Write-Host $StatusChangedDirToParentFolder -ForegroundColor Green
+
+    # Check existing Autoruns folder, if exist, we delete for a fresh start.
+    if (Test-Path .\$AppFName) {
+        Write-Host $StatusFCheckExisting -ForegroundColor Green
+        Remove-Item .\$AppFName -Recurse
+        Write-Host $StatusFRemoveExisting -ForegroundColor Green
+    }
+
+    # Create new Autoruns Folder, change dir to Autoruns folder
+    $null = New-Item -Path .\ -Name "$AppFName" -ItemType "directory" -Force
+    Write-Host $StatusFCreatedAppFFolder -ForegroundColor Green
+    set-location "$UserDesktopPath\$ParentFolder\$AppFName"
+    Write-Host $StatusFChangedDirToAppFolder -ForegroundColor Green        
+
+    # Check for Download request
+    if ($Source -eq "MAIN SOURCE"){
+        $global:AppFURLUsed = $AppFURLMain
+        $AppFHashUsed = $AppFHashMain
+    }
+    if ($Source -eq "MIRROR SOURCE"){
+        $global:AppFURLUsed = $AppFURLMirror
+        $AppFHashUsed = $AppFHashMirror
+    }
+
+    # Download zip file from Repo
+    Write-Host $StatusFDownloadApp -ForegroundColor Green
+    Clear-Variable -Name "Source" -Scope Global
+    Invoke-WebRequest -Uri $AppFURLUsed -OutFile .\$AppFName.exe
+
+    # Download Autoruns
+    Write-Host $StatusFHashCheck -ForegroundColor Green
+    $HashDownload = Get-FileHash .\$AppFName.exe | Select-Object -ExpandProperty Hash
+   
+
+        # Hash Diff Allow/Deny Progression    
+        if ($AppFHashUsed -eq $HashDownload){
+            $AppFHashValid = "True"
+            Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppFHashUsed}" -ForegroundColor Green
+            Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Green
+            Write-Host "              |------------------------ [ HASH VALID ] ------------------------|`n" -ForegroundColor Yellow
+            
+        }
+        else {
+            $AppFHashValid = "False"
+            Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppFHashUsed}" -ForegroundColor Green
+            Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Red
+            Write-Host "              |---------------------- [ HASH INVALID ] ----------------------|`n" -ForegroundColor Red
+            Write-Host "Hash INVALID, URL possibly hijacked or updated. Use MIRROR SOURCE for saftey." -ForegroundColor Red
+            Remove-Item .\$AppFName.exe
+            pause
+        }
+
+        if ($AppFHashValid -eq "True"){
+    
+        # Change the directory to AppFName
+        set-location "$UserDesktopPath\$ParentFolder\$AppFFolder"
+        
+        # Check if staging and initialization is complete
+        $HealthCheck = "True"
+        
+        # Call Autoruns
+        Write-Host $BannerF
+        Write-Host $StatusFBootUp -ForegroundColor Yellow
+        Invoke-Expression .\$AppFName.exe
+        
+        }
+}
+
 
 # VARIABLES - AppG (CTI Search Online Reputation Search) -----------------------------------------------------------------------------------------------------------------------------------------------------
 $AppGName = "CTI Search"
@@ -1192,18 +1314,21 @@ do
         'C' {
         $global:Source = "MAIN SOURCE"
         StartDBCLI($Source)
-        
         } 
         'CC' {
         $global:Source = "MIRROR SOURCE"
         StartDBCLI($Source)
-        
         } 
         'E' {
         'Placeholder'
         } 
         'F' {
-        'Autoruns'
+        $global:Source = "MAIN SOURCE"
+        StartAutoruns($Source)
+        }
+        'FF'{
+        $global:Source = "MIRROR SOURCE"
+        StartAutoruns($Source)
         }
         'G' {
         'CTI SEARCH'
