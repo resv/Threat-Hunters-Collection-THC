@@ -116,7 +116,7 @@ $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$P
 
 # VARIABLES A - AppA (Host Info)
     $AppAName = "Host Info"
-    $AppADescription = "Get Host Information"
+    $AppADescription = "Enumerate Host Info"
     $Hostname = hostname
     $PrintWorkingDirectory = Get-Location
         #Grab IP info
@@ -976,7 +976,7 @@ function StartDBCLI($Source) {
     Write-Host `n`n`n`n`n`n
 
     # Notify DBCLI Source URL and hash based on request
-     if ($Source -eq "MAIN SOURCE"){
+    if ($Source -eq "MAIN SOURCE"){
         Write-Host "[MAIN SOURCE]: " -ForegroundColor Green -NoNewline; Write-Host $AppCURLMain -ForegroundColor Yellow
         Write-Host "    [SHA-256]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashMain}" -ForegroundColor Yellow `n 
     }
@@ -1056,7 +1056,6 @@ function StartDBCLI($Source) {
 
 function AppCWipe {
      # Confirm from user first, then check for DeepBlue folder, if exists, delete it.
-
     $selectionAppCWipe = Read-Host "Are you sure you want to remove the $AppCFolder Directory? (Y/N)"
     switch ($selectionAppCWipe)
     {
@@ -1105,7 +1104,7 @@ $AppFName = "Autoruns"
     $StatusFHashCheck = "5 [ Checking hash ]`n"
     $StatusFBootUp = "6 [ Booting up `"$AppFName`" ]`n"
     $StatusFChangedDirToAppFFolder = "7 [ You are in the $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
-    $StatusFReady = "8 [ Ready for Hunting... ]`n"
+    $StatusFReady = "8 [ $AppFName is Ready for Hunting... ]`n"
     $StatusFLoading = "9 [ Retrieving Data... ]`n"
     $StatusFCreatedAppFLogFolder = "`n10 [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusFCreatedAppFImportLogFolder = "`n11 [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
@@ -1114,7 +1113,17 @@ $AppFName = "Autoruns"
     #$LogPathExportFolder = "$UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs"
     #$LogPathImportFolder = "$UserDesktopPath\$ParentFolder\Import-Log-Folder"
 
-function StartAutoruns($Source) {   
+    # AppFMenu
+$AppFMenu = @"
+
+         _______[ AUTORUNS MENU ]________
+        |                                |
+        |    [Wipe] | Close and Wipe     |
+        |    [Back] | Back to Main Menu  |
+        |________________________________|`n `n
+"@
+
+function StartAutoruns($Source){   
     #Clear
     clear
 
@@ -1142,6 +1151,8 @@ function StartAutoruns($Source) {
     # Check existing Autoruns folder, if exist, we delete for a fresh start.
     if (Test-Path .\$AppFName) {
         Write-Host $StatusFCheckExisting -ForegroundColor Green
+        $null = taskkill /F /IM Autoruns.exe /T
+        Start-Sleep -Seconds 2
         Remove-Item .\$AppFName -Recurse
         Write-Host $StatusFRemoveExisting -ForegroundColor Green
     }
@@ -1178,34 +1189,79 @@ function StartAutoruns($Source) {
             Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppFHashUsed}" -ForegroundColor Green
             Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Green
             Write-Host "              |------------------------ [ HASH VALID ] ------------------------|`n" -ForegroundColor Yellow
-            
         }
         else {
             $AppFHashValid = "False"
             Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppFHashUsed}" -ForegroundColor Green
             Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Red
             Write-Host "              |---------------------- [ HASH INVALID ] ----------------------|`n" -ForegroundColor Red
-            Write-Host "Hash INVALID, URL possibly hijacked or updated. Use MIRROR SOURCE for saftey." -ForegroundColor Red
-            Remove-Item .\$AppFName.exe
-            pause
+            Write-Host "Hash INVALID, URL possibly hijacked or updated. Removed $AppFName.exe, use MIRROR SOURCE for saftey." -ForegroundColor Red
+            set-location "$UserDesktopPath\$ParentFolder"
+            Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
+            Read-Host "Press any key to return to the main menu"
         }
 
         if ($AppFHashValid -eq "True"){
-    
         # Change the directory to AppFName
         set-location "$UserDesktopPath\$ParentFolder\$AppFFolder"
-        
-        # Check if staging and initialization is complete
         $HealthCheck = "True"
-        
-        # Call Autoruns
-        Write-Host $BannerF
-        Write-Host $StatusFBootUp -ForegroundColor Yellow
         Invoke-Expression .\$AppFName.exe
-        
+        AppFMenuMain
+        }
+
+        if ($AppFHashValid -eq "False"){
+        # Exit back to main menu
+        Show-Menu
         }
 }
 
+#AppF Autoruns main menu
+function AppFMenuMain{      
+    do
+    {  
+        $selectionAppF = Read-Host $StatusFReady $BannerF $AppFmenu "$AppFName main menu, waiting for your input"
+        switch ($selectionAppF)
+        {
+            'Wipe' {
+                AppFWipe
+                return
+            }
+            'Back' {
+                Show-Menu
+            }
+        }
+    }
+    until ($selectionAppF -eq 'Back')
+}
+        
+# Wipe AutoRuns (Different format due to exe)
+function AppFWipe {
+    do
+    {
+    # Confirm user, then implement
+    $selectionAppFWipe = Read-Host "Are you sure you want to close & wipe $AppFName (Y/N)"
+    switch ($selectionAppFWipe)
+    {
+        'Y' {
+            if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
+                set-location "$UserDesktopPath\$ParentFolder"
+                $null = taskkill /F /IM Autoruns.exe /T  
+                Start-Sleep -Seconds 2
+                Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
+                Show-Menu
+                }
+        } 
+        'N' {
+            clear
+            AppFMenuMain
+            return
+        }
+    }
+    pause
+ }
+until ($selectionAppFWipe -eq 'Y')
+}
+ 
 
 # VARIABLES - AppG (CTI Search Online Reputation Search) -----------------------------------------------------------------------------------------------------------------------------------------------------
 $AppGName = "CTI Search"
@@ -1216,8 +1272,9 @@ $AppHName = "Wipe THC & Exit"
 $AppHDescription = "Delete all THC folder/files, Exits"
 
 function WipeTHC {
+    do
+    {
     # Confirm from user first, then check for THC folder, if exists, delete it.
-
     $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Y/N)"
     switch ($selectionWipeTHC)
     {
@@ -1234,8 +1291,8 @@ function WipeTHC {
     }
     pause
  }
- until ($selection -eq 'back')
-   
+ until ($selection -eq 'N')
+}
 
 # VARIABLES - AppX (More Info & Contact) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppXName = "Contact"
