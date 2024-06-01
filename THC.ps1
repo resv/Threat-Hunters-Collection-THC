@@ -1233,14 +1233,18 @@ function AppFMenuMain{
             'Wipe' {
                 AppFWipe
                 Show-Menu
-                return
             }
             'Back' {
+                clear
                 Show-Menu
+            }
+            '' {
+            clear
+            AppFMenuMain
             }
         }
     }
-    until ($selectionAppF -eq 'Wipe')
+    until ($selectionAppF -eq 'Wipe'-or $selectionAppF -eq 'Back' -or $selectionAppF -eq '')
 }
         
 # Wipe AutoRuns (Different format due to exe)
@@ -1262,12 +1266,13 @@ function AppFWipe {
         'N' {
             clear
             AppFMenuMain
-            return
+        }
+        '' {
+            AppFWipe
         }
     }
-    pause
  }
-until ($selectionAppFWipe -eq 'y')
+until ($selectionAppFWipe -eq 'Y' -or $selectionAppFWipe -eq 'N' -or $selectionAppFWipe -eq '')
 }
  
 
