@@ -175,10 +175,10 @@ $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$P
     $AppCFolder = "DeepBlueCLI"
         # URLs
         $AppCURLMain = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
-        $AppCURLMirror = "https://github.com/resv/DeepBlueCLI-Back-Up/archive/refs/heads/master.zip"
+        $AppCURLMirror = "https://github.com/resv/THC-MIRROR-APPS/raw/main/DeepBlueCLI-master.zip"
            
     $AppCHashMain = "2295C0E92697A8F5425F20E4119F7A049428C2A47AF48F88ABABA206309DEE51"
-    $AppCHashMirror = "9B0BA2CE0752AE68C0AE8553AD14E46590A6745F9B7EAA085E20C2363B9D4CA9"
+    $AppCHashMirror = "A86D97A25D790F860B89887C241961C60BBCD12C13D47C31FA4125CBF30E8C1E"
 
     # VARIABLES C - Status notifications
     $StatusCCreatedAppCFolder = "> [ Adding new directories $UserDesktopPath\$ParentFolder\$AppCFolder ]`n"
@@ -1084,16 +1084,14 @@ $AppEDescription = "placeholder"
 
 # VARIABLES - AppF (Autoruns) ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppFName = "Autoruns"
-$AppFDescription = "Scheduled tasks/persistence checker" 
-$AppFName = "Autoruns"
-    $AppFDescription = "Get $AppFName, extract, remove zip"
+$AppFDescription = "Scheduled tasks/persistence check" 
     $AppFFolder = "Autoruns"
         # URLs
         $AppFURLMain = "https://live.sysinternals.com/autoruns.exe"
         $AppFURLMirror = "https://github.com/resv/THC-MIRROR-APPS/raw/main/Autoruns/autoruns.exe"
            
     $AppFHashMain = "F41051697B220757F3612ECD00749B952CE7BCAADD9DC782D79EF0338E45C3B6"
-    $AppFHashMirror = "9B0BA2CE0752AE68C0AE8553AD14E46590A6745F9B7EAA085E20C2363B9D4CA9"
+    $AppFHashMirror = "F41051697B220757F3612ECD00749B952CE7BCAADD9DC782D79EF0338E45C3B6"
 
     # VARIABLES F - Status notifications
     $StatusFCreatedAppFFolder = "1 [ Adding new directory $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
