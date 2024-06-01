@@ -393,7 +393,7 @@ function RunImport{
     #$global:LogCountImportApplication = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Application.evtx`" -MaxEvents 500000"
     $global:LogCountImportAppLocker = Invoke-expression "get-winevent -Path `"$LogPathImportAppLocker`" -MaxEvents 500000"
     #$global:LogCountImportPowerShell = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-PowerShell%4Operational.evtx`" -MaxEvents 500000"
-   # $global:LogCountImportSysmon = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx`" -MaxEvents 500000"
+    #$global:LogCountImportSysmon = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx`" -MaxEvents 500000"
     #$global:LogCountImportWMI = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-WMI-Activity%4Operational.evtx`" -MaxEvents 500000"
 
     do
@@ -1017,21 +1017,25 @@ function StartDBCLI($Source) {
     # Download DBCLI
     Write-Host $StatusCHashCheck -ForegroundColor Green
     $HashDownload = Get-FileHash .\$AppCName.zip | Select-Object -ExpandProperty Hash
-    Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashUsed}" -ForegroundColor Red
-    Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Red
+ 
 
         # Hash Diff Allow/Deny Progression    
         if ($AppCHashUsed -eq $HashDownload){
             $AppCHashValid = "True"
-            Write-Host "              |------------------------ [ HASH VALID ] ------------------------|`n" -ForegroundColor Green
+            Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashUsed}" -ForegroundColor Green
+            Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Green
+            Write-Host "              |------------------------ [ HASH VALID ] ------------------------|`n" -ForegroundColor Yellow
             
         }
         else {
             $AppCHashValid = "False"
-            Write-Host "Hash INVALID, URL possibly hijacked or updated. Use MIRROR SOURCE for saftey." -ForegroundColor Red
-            Remove-Item .\$AppCName.zip
-            pause
-            
+            Write-Host "  [EXPECTED]: " -ForegroundColor Green -NoNewline; Write-Host "{$AppCHashUsed}" -ForegroundColor Green
+            Write-Host "[DOWNLOADED]: " -ForegroundColor Green -NoNewline; Write-Host "{$HashDownload}" -ForegroundColor Red
+            Write-Host "              |----------------------- [ HASH INVALID ] -----------------------|`n" -ForegroundColor Red
+            Write-Host "Hash INVALID, URL possibly hijacked or updated. Removed $AppCName.zip, Use MIRROR SOURCE for saftey." -ForegroundColor Red
+            set-location "$UserDesktopPath\$ParentFolder"
+            Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppCName.zip"
+            Read-Host "Press any key to return to the main menu"
         }
 
         if ($AppCHashValid -eq "True"){
@@ -1041,6 +1045,10 @@ function StartDBCLI($Source) {
         Rename-Item .\$AppCName-master .\$AppCName
         Remove-Item .\$AppCName.zip
         Write-Host $StatusCRemoveDownload -ForegroundColor Green
+
+        if ($AppCHashValid -eq "False"){
+        Show-Menu
+        }
     
     # Change the directory to AppCName
     set-location "$UserDesktopPath\$ParentFolder\$AppCFolder"
@@ -1064,15 +1072,17 @@ function AppCWipe {
                 set-location "$UserDesktopPath\$ParentFolder"
                 Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppCFolder"
                 Show-Menu
+                return
                 }
         } 
         'N' {
+            return
             DBCLIMenuMain
         }
     }
     pause
  }
- until ($selection -eq 'back')
+ until ($selection -eq 'Y')
 
 # VARIABLES - AppD (PlaceHolder) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppDName = "PlaceHolder"
@@ -1222,6 +1232,7 @@ function AppFMenuMain{
         {
             'Wipe' {
                 AppFWipe
+                Show-Menu
                 return
             }
             'Back' {
@@ -1229,7 +1240,7 @@ function AppFMenuMain{
             }
         }
     }
-    until ($selectionAppF -eq 'Back')
+    until ($selectionAppF -eq 'Wipe')
 }
         
 # Wipe AutoRuns (Different format due to exe)
@@ -1246,7 +1257,6 @@ function AppFWipe {
                 $null = taskkill /F /IM Autoruns.exe /T  
                 Start-Sleep -Seconds 2
                 Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
-                Show-Menu
                 }
         } 
         'N' {
@@ -1257,7 +1267,7 @@ function AppFWipe {
     }
     pause
  }
-until ($selectionAppFWipe -eq 'Y')
+until ($selectionAppFWipe -eq 'y')
 }
  
 
@@ -1285,6 +1295,7 @@ function WipeTHC {
         } 
         'N' {
             Show-Menu
+            return
         }
     }
     pause
@@ -1401,8 +1412,10 @@ do
         'ZZ' {
         Invoke-Expression $ExitHard
         }
+        '' {
+        Show-Menu
+        }
     }
-    pause
  }
- until ($selection -eq 'back')
+ until ($selection -eq 'zz')
 
