@@ -96,7 +96,8 @@ $HealthCheck = "False"
 $ParentFolder = "Threat Hunters Collection"
 $UserProfilePath = $($env:userprofile)
 $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
-$StatusCreatedParentFolder = "> [ Adding new directories $UserDesktopPath\$ParentFolder ]`n"
+$StatusLoadingLineBreak = "`n`n`n`n`n`n"
+$StatusCreatedParentFolder = "> [ Adding new directory $UserDesktopPath\$ParentFolder ]`n"
 $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$ParentFolder ]`n"
 
 # VARIABLES A - AppA (Host Info)
@@ -114,6 +115,9 @@ $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$P
     function HostInfo {
     #Clear
     Clear
+    
+    #Make room for Loadingbar
+    Write-Host $StatusLoadingLineBreak
     
     # Start transcript to capture all output, appends info if tracking changes.
     Start-Transcript -Path "$UserDesktopPath\$ParentFolder\$Hostname-Host-Info.txt" -Append | Out-Null
@@ -168,8 +172,8 @@ $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$P
     $AppCHashMirror = "A86D97A25D790F860B89887C241961C60BBCD12C13D47C31FA4125CBF30E8C1E"
 
     # VARIABLES C - Status notifications
-    $StatusCCreatedAppCFolder = "> [ Adding new directories $UserDesktopPath\$ParentFolder\$AppCFolder ]`n"
-    $StatusCChangedDirToAppCFolder = ">> [ Changed working directory to ..\$AppCFolder ]`n"
+    $StatusCCreatedAppCFolder = "> [ Adding directory $UserDesktopPath\$ParentFolder\$AppCFolder ]`n"
+    $StatusCChangedDirToAppCFolder = ">> [ Changed directory to ..\$AppCFolder ]`n"
     $StatusCCheckAndRemoveExisting = ">>> [ Removing any existing DeepBlue files ]`n"
     $StatusCDownloadApp = ">>>> [ Downloading `"$AppCName`" ]`n"
     $StatusCHashCheck = ">>>>> [ Checking hash ]`n"
@@ -983,8 +987,8 @@ function StartDBCLI($Source) {
     #Clear
     clear
 
-    # Welcome BannerAppC
-    Write-Host `n`n`n`n`n`n
+    # Make space for download status bar
+    Write-Host $StatusLoadingLineBreak
 
     # Notify DBCLI Source URL and hash based on request
     if ($Source -eq "MAIN SOURCE"){
@@ -1119,7 +1123,7 @@ $AppFDescription = "Scheduled tasks/persistence check"
     $AppFHashMirror = "F41051697B220757F3612ECD00749B952CE7BCAADD9DC782D79EF0338E45C3B6"
 
     # VARIABLES F - Status notifications
-    $StatusFCreatedAppFFolder = "1 [ Adding new directory $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFCreatedAppFFolder = "> [ Adding new directory $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
     $StatusFChangedDirToAppFFolder = "2 [ Changed working directory to ..\$AppFFolder ]`n"
     $StatusFCheckExisting = "3 [ Detected existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
     $StatusFRemoveExisting = "3 [ Removed existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
@@ -1153,7 +1157,7 @@ function StartAutoruns($Source){
     clear
 
     # Make space for download status bar
-    Write-Host `n`n`n`n`n`n
+    Write-Host $StatusLoadingLineBreak
 
     # Notify Autoruns Source URL and hash based on request
      if ($Source -eq "MAIN SOURCE"){
@@ -1301,42 +1305,6 @@ until ($selectionAppFWipe -eq 'Y' -or $selectionAppFWipe -eq 'N' -or $selectionA
 $AppGName = "CTI Search"
 $AppGDescription = "Online Reputation Searcher"
 
-# VARIABLES - AppY (Wipe THC from endpoint) ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$AppYName = "Wipe THC & Exit"
-$AppYDescription = "Delete all THC folder/files, Exits"
-
-function WipeTHC {
-    do
-    {
-    # Confirm from user first, then check for THC folder, if exists, delete it.
-    $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Y/N)"
-    switch ($selectionWipeTHC)
-    {
-        'Y' {
-            #Closes AppF and removes
-            if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
-                Write-Host "`n > Wiping Autoruns..."
-                set-location "$UserDesktopPath\$ParentFolder"
-                $null = taskkill /F /IM Autoruns.exe /T  
-                Start-Sleep -Seconds 2
-                Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
-            }
-            #Remove Parent folder
-            if (Test-Path "$UserDesktopPath\$ParentFolder") {
-                Write-Host "`n >> Wiping THC Folder..."
-                set-location "$UserDesktopPath"
-                Remove-Item "$UserDesktopPath\$ParentFolder" -Recurse -Force
-                [System.Environment]::Exit(0)
-                }
-        }
-        'N' {
-            Show-Menu
-            return
-        }
-    }
- }
- until ($selection -eq 'N')
-}
 
 # VARIABLES - AppX (More Info & Contact) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppXName = "Contact"
@@ -1375,6 +1343,43 @@ function AppXShowContact {
     Write-Host $AppXNotes -ForegroundColor Yellow
     Write-Host $AppXConactInfo -ForegroundColor Cyan
     Write-Host $AppXCreditsInfo -ForegroundColor DarkGray
+}
+
+# VARIABLES - AppY (Wipe THC from endpoint) ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppYName = "Wipe THC & Exit"
+$AppYDescription = "Close, wipe, & exit THC"
+
+function WipeTHC {
+    do
+    {
+    # Confirm from user first, then check for THC folder, if exists, delete it.
+    $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Y/N)"
+    switch ($selectionWipeTHC)
+    {
+        'Y' {
+            #Closes AppF and removes
+            if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
+                Write-Host "`n > Wiping Autoruns..."
+                set-location "$UserDesktopPath\$ParentFolder"
+                $null = taskkill /F /IM Autoruns.exe /T  
+                Start-Sleep -Seconds 2
+                Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
+            }
+            #Remove Parent folder
+            if (Test-Path "$UserDesktopPath\$ParentFolder") {
+                Write-Host "`n >> Wiping THC Folder..."
+                set-location "$UserDesktopPath"
+                Remove-Item "$UserDesktopPath\$ParentFolder" -Recurse -Force
+                [System.Environment]::Exit(0)
+                }
+        }
+        'N' {
+            Show-Menu
+            return
+        }
+    }
+ }
+ until ($selection -eq 'N')
 }
 
 # VARIABLES - AppZ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
