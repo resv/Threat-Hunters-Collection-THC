@@ -97,6 +97,7 @@ $ParentFolder = "Threat Hunters Collection"
 $UserProfilePath = $($env:userprofile)
 $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
 $StatusLoadingLineBreak = "`n`n`n`n`n`n"
+$StatusBlankSpace = "                   "
 $StatusCreatedParentFolder = "> [ Adding new directory $UserDesktopPath\$ParentFolder ]`n"
 $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$ParentFolder ]`n"
 $StatusWipeReminder = "[ Don't forget to wipe THC :) ]"
@@ -1282,7 +1283,8 @@ function AppFWipe {
     {
         'Y' {
             if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
-                Write-Host $StatusFWipe
+                Write-Host $StatusFWipe`n
+                Write-Host $StatusWipeReminder -ForegroundColor DarkMagenta -Background Yellow
                 set-location "$UserDesktopPath\$ParentFolder"
                 $null = taskkill /F /IM Autoruns.exe /T  
                 Start-Sleep -Seconds 2
@@ -1310,7 +1312,6 @@ $AppGDescription = "Online Reputation Searcher"
 # VARIABLES - AppX (More Info & Contact) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppXName = "Contact"
 $AppXDescription = "More Info & Contact"
-$AppXBlankSpace = "                   "
 $AppXVersion = "Alpha 1.0"
 $AppxReleaseDate = "XX/xx/24"
 $AppXNotes = @"
@@ -1340,7 +1341,7 @@ $AppXCreditsInfo= @"
 
 function AppXShowContact {
     Write-Host $BannerX
-    Write-Host $AppXBlankSpace [ $AppXVersion $AppXReleaseDate ] `n 
+    Write-Host $StatusBlankSpace [ $AppXVersion $AppXReleaseDate ] `n 
     Write-Host $AppXNotes -ForegroundColor Yellow
     Write-Host $AppXConactInfo -ForegroundColor Cyan
     Write-Host $AppXCreditsInfo -ForegroundColor DarkGray
