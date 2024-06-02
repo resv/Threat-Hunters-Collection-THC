@@ -147,6 +147,7 @@ $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$P
     Write-Host $StatusAExportComplete -ForegroundColor Yellow
     # Stop transcript
     Stop-Transcript | Out-Null
+    pause
 }
 
 # VARIABLES B - AppB (Sysmon)
@@ -1049,8 +1050,9 @@ function StartDBCLI($Source) {
 }
 
 function AppCWipe {
+    do {
      # Confirm from user first, then check for DeepBlue folder, if exists, delete it.
-    $selectionAppCWipe = Read-Host "Are you sure you want to remove the $AppCFolder Directory? (Y/N)"
+    $selectionAppCWipe = Read-Host "Are you sure you want wipe $AppCFolder? (Y/N)"
     switch ($selectionAppCWipe)
     {
         'Y' {
@@ -1065,10 +1067,13 @@ function AppCWipe {
             return
             DBCLIMenuMain
         }
+        '' {
+            AppCWipe
+        }
     }
-    pause
  }
- until ($selection -eq 'Y')
+ until ($selection -eq 'Y' -or $selection -eq 'N' -or $selection -eq '')
+}
 
 # VARIABLES - AppD (PlaceHolder) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppDName = "PlaceHolder"
