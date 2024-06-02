@@ -3,21 +3,6 @@
 ##Good quick info, implement later for hunters  https://mahim-firoj.medium.com/incident-response-and-threat-hunting-using-deepbluecli-tool-bf5d4c52c8a8
 
 # VARIABLES - BANNERS
-$Banner= @"
-_________________________________________________________________________________
-  ________  ______  _________  ______   __  ____  ___   __________________  _____
- /_  __/ / / / __ \/ ____/   |/_  __/  / / / / / / / | / /_  __/ ____/ __ \/ ___/
-  / / / /_/ / /_/ / __/ / /| | / /    / /_/ / / / /  |/ / / / / __/ / /_/ /\__ \ 
- / / / __  / _, _/ /___/ ___ |/ /    / __  / /_/ / /|  / / / / /___/ _, _/___/ / 
-/_/ /_/ /_/_/_|_/_____/_/  |_/_/   _/_/_/_/\____/_/_|_/_/_/_/_____/_/ |_|/____/  
-          / ____/ __ \/ /   / /   / ____/ ____/_  __/  _/ __ \/ | / /            
-         / /   / / / / /   / /   / __/ / /     / /  / // / / /  |/ /             
-        / /___/ /_/ / /___/ /___/ /___/ /___  / / _/ // /_/ / /|  /              
-        \____/\____/_____/_____/_____/\____/ /_/ /___/\____/_/ |_/
-
-                                            Catalyzed with purpose by: Banner OG
-_________________________________________________________________________________`n
-"@ 
 
 $Banner1of4= @"
 _________________________________________________________________________________
@@ -165,13 +150,14 @@ $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$P
 }
 
 # VARIABLES B - AppB (Sysmon)
-    $AppBName = "Sysmon vXX.XX"
-    $AppBDescription = "Get $AppBName from MS and install"
+    $AppBName = "Sysmon"
+    $AppBDescription = "logs system activity to the Windows event log"
+    $AppBVersion = "xx.xx"
     $AppBFolder = "$AppBName"
 
 # VARIABLES C - AppC (DeepBlueCLI)
     $AppCName = "DeepBlueCLI"
-    $AppCDescription = "Get $AppCName, extract, remove zip"
+    $AppCDescription = "Hunt via Windows Event Logs"
     $AppCFolder = "DeepBlueCLI"
         # URLs
         $AppCURLMain = "https://github.com/sans-blue-team/DeepBlueCLI/archive/refs/heads/master.zip"
