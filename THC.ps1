@@ -99,6 +99,7 @@ $UserDesktopPath = [Environment]::GetFolderPath("Desktop")
 $StatusLoadingLineBreak = "`n`n`n`n`n`n"
 $StatusCreatedParentFolder = "> [ Adding new directory $UserDesktopPath\$ParentFolder ]`n"
 $StatusChangedDirToParentFolder = ">> [ Changed directory to $UserDesktopPath\$ParentFolder ]`n"
+$StatusWipeReminder = "[ Don't forget to wipe THC :) ]"
 
 # VARIABLES A - AppA (Host Info)
     $AppAName = "Host Info"
@@ -1123,17 +1124,15 @@ $AppFDescription = "Scheduled tasks/persistence check"
     $AppFHashMirror = "F41051697B220757F3612ECD00749B952CE7BCAADD9DC782D79EF0338E45C3B6"
 
     # VARIABLES F - Status notifications
-    $StatusFCreatedAppFFolder = "> [ Adding new directory $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
-    $StatusFChangedDirToAppFFolder = "2 [ Changed working directory to ..\$AppFFolder ]`n"
-    $StatusFCheckExisting = "3 [ Detected existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
-    $StatusFRemoveExisting = "3 [ Removed existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
-    $StatusFDownloadApp = "4 [ Downloading `"$AppFName.exe`" ]`n"
-    $StatusFHashCheck = "5 [ Checking hash ]`n"
-    $StatusFBootUp = "6 [ Booting up `"$AppFName`" ]`n"
-    $StatusFChangedDirToAppFFolder = "7 [ You are in the $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
-    $StatusFReady = "8 [ $AppFName is Ready for Hunting... ]`n"
-    $StatusFLoading = "9 [ Retrieving Data... ]`n"
-    $StatusFWipe = "10 [ Wiping $AppFName only, Don't forget to wipe THC :)]"
+    $StatusFDetectedExisting = ">>> [ Detected existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFRemoveExisting = ">>> [ Removed existing $AppFName files in $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFCreatedAppFFolder = ">>>> [ Adding new directory $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFChangedDirToAppFFolder = ">>>>> [ Changed working directory to $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
+    $StatusFDownloadApp = ">>>>>> [ Downloading `"$AppFName.exe`" ]`n"
+    $StatusFHashCheck = ">>>>>>> [ Checking hash ]`n"
+    $StatusFBootUp = ">>>>>>>> [ Booting up `"$AppFName`" ]`n"
+    $StatusFReady = ">>>>>>>>> [ $AppFName is Ready for Hunting... ]`n"
+    $StatusFWipe = ">>>>>>>>>> [ Wiping $AppFName ]"
     $StatusFCreatedAppFLogFolder = "`n10 [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusFCreatedAppFImportLogFolder = "`n11 [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
     $StatusFExportComplete = "`n12 [ Exported raw logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
@@ -1179,7 +1178,7 @@ function StartAutoruns($Source){
 
     # Check existing Autoruns folder, if exist, we delete for a fresh start.
     if (Test-Path .\$AppFName) {
-        Write-Host $StatusFCheckExisting -ForegroundColor Green
+        Write-Host $StatusFDetectedExisting -ForegroundColor Green
         $null = taskkill /F /IM Autoruns.exe /T
         Start-Sleep -Seconds 2
         Remove-Item .\$AppFName -Recurse
@@ -1190,7 +1189,7 @@ function StartAutoruns($Source){
     $null = New-Item -Path .\ -Name "$AppFName" -ItemType "directory" -Force
     Write-Host $StatusFCreatedAppFFolder -ForegroundColor Green
     set-location "$UserDesktopPath\$ParentFolder\$AppFName"
-    Write-Host $StatusFChangedDirToAppFolder -ForegroundColor Green        
+    Write-Host $StatusFChangedDirToAppFFolder -ForegroundColor Green        
 
     # Check for Download request
     if ($Source -eq "MAIN SOURCE"){
@@ -1234,7 +1233,9 @@ function StartAutoruns($Source){
         # Change the directory to AppFName
         set-location "$UserDesktopPath\$ParentFolder\$AppFFolder"
         $HealthCheck = "True"
+        Write-Host $StatusFBootUp -ForegroundColor Green
         Invoke-Expression .\$AppFName.exe
+        Write-Host $StatusFReady -ForegroundColor Cyan
         AppFMenuMain
         }
 
@@ -1248,7 +1249,7 @@ function StartAutoruns($Source){
 function AppFMenuMain{      
     do
     {  
-        $selectionAppF = Read-Host $StatusFReady $BannerF $AppFmenu "$AppFName main menu, waiting for your input"
+        $selectionAppF = Read-Host $BannerF $AppFmenu "$AppFName main menu, waiting for your input"
         switch ($selectionAppF)
         {
             'Wipe' {
@@ -1348,30 +1349,48 @@ function AppXShowContact {
 # VARIABLES - AppY (Wipe THC from endpoint) ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppYName = "Wipe THC & Exit"
 $AppYDescription = "Close, wipe, & exit THC"
+$AppYCanQuit = "False"
+$StatusYWipe = ">>>>>>>>>> [ Wiping THC Folder ]"
+$StatusYWipeComplete = ">>>>>>>>>> [ Success, THC.ps1 needs manual deletion ]"
+$StatusYAppState = ""
+$StatusYError = ">>>>>>>>>> [ Something went wrong with $StatusAppYState, something holding ownership? ]"
 
 function WipeTHC {
     do
     {
-    # Confirm from user first, then check for THC folder, if exists, delete it.
-    $selectionWipeTHC = Read-Host "Are you sure you want to remove $ParentFolder Directory? (Y/N)"
+    # Confirm Wipe with user
+    $selectionWipeTHC = Read-Host "Are you sure you want wipe THC (Y/N)"
     switch ($selectionWipeTHC)
     {
         'Y' {
-            #Closes AppF and removes
+            # Closes AppF - If exists, we set state to AppF, if wipe is successful, we reset state and progress to next if.
             if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
-                Write-Host "`n > Wiping Autoruns..."
+                $StatusYAppState = "$AppFName"
+                Write-Host "`n$StatusFWipe"
                 set-location "$UserDesktopPath\$ParentFolder"
                 $null = taskkill /F /IM Autoruns.exe /T  
                 Start-Sleep -Seconds 2
                 Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
+                $StatusYAppState = ""
             }
-            #Remove Parent folder
+            # Remove ParentFolder - If exists, we set state to ParentFolder, if wipe is successful, we reset state and progress to next if.
             if (Test-Path "$UserDesktopPath\$ParentFolder") {
-                Write-Host "`n >> Wiping THC Folder..."
+                $StatusYAppState = "$ParentFolder"
+                Write-Host "$StatusYWipe"
                 set-location "$UserDesktopPath"
                 Remove-Item "$UserDesktopPath\$ParentFolder" -Recurse -Force
+                $StatusYAppState = ""
+            }
+            # Condition of state satisfied? - If state is blank, all wipes are successful, we can quit.
+            if ($StatusYAppState -eq ""){
+                Write-Host $StatusYWipeComplete
                 [System.Environment]::Exit(0)
-                }
+            }
+            # Condition NOT satisfied to quit, display state of where error occurred.
+            if ($StatusYAppState -ne ""){
+                Write-Host $StatusYError
+                pause
+            }
         }
         'N' {
             Show-Menu
