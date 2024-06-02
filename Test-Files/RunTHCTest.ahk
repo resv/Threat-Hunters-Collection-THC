@@ -3,7 +3,7 @@ Send, cd ~
 Sleep, 100
 Send, {Enter}
 Sleep, 100
-Send, cd .\Desktop\Threat-Hunters-Collection-THC\
+Send, cd .\Desktop\THC
 Sleep, 100
 Send, {Enter}
 Sleep, 100

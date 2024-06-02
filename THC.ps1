@@ -385,7 +385,6 @@ function RunImport{
 
     do
     {
-        ##showmenu
         $selectionImport = Read-Host $AppCMenuImportMain "Imported main menu, Waiting for your input"
         switch ($selectionImport)
         {
@@ -647,7 +646,7 @@ function DBCLIMenuMain{
                             Write-Host $DBCLIHelp      
                             }
                         'Exit' {
-                            Invoke-Expression $ExitHard     
+                            ExitHard     
                             }                
                         'Back' {
                             AppCMenuMain
@@ -693,7 +692,10 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            ExitHard
+                            }              
                         'Back' {
                             AppCMenuMain
                             } 
@@ -738,7 +740,10 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            ExitHard  
+                            }              
                         'Back' {
                             AppCMenuMain
                             } 
@@ -783,7 +788,10 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            ExitHard  
+                            }          
                         'Back' {
                             AppCMenuMain
                             } 
@@ -828,9 +836,12 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            ExitHard   
+                            }           
                         'Back' {
-                            AppCMenuMain
+                            DBCLIMenuMain
                             } 
                     }
                     pause
@@ -873,7 +884,10 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            ExitHard   
+                            }           
                         'Back' {
                             AppCMenuMain
                             } 
@@ -918,7 +932,10 @@ function DBCLIMenuMain{
                             Clear-Host
                             Write-Host $BannerC
                             Write-Host $DBCLIHelp      
-                            }        
+                            }
+                        'Exit' {
+                            ExitHard  
+                            }           
                         'Back' {
                             AppCMenuMain
                             } 
@@ -938,16 +955,23 @@ function DBCLIMenuMain{
                 Write-Host $BannerC
                 Write-Host $DBCLIHelp                    
                 }
-                'Exit' {
-                Invoke-Expression $ExitHard
-                }
                 'Wipe' {
                 AppCWipe
+                }
+                'Exit' {
+                ExitHard
+                }
+                'Back' {
+                Show-Menu
+                }
+                '' {
+                clear
+                DBCLIMenuMain
                 }
             }
             pause
         }
-        until ($selection -eq 'back')
+        until ($selection -eq 'Back' -or $selection -eq '')
     }
     else
     {
@@ -1105,6 +1129,7 @@ $AppFDescription = "Scheduled tasks/persistence check"
     $StatusFChangedDirToAppFFolder = "7 [ You are in the $UserDesktopPath\$ParentFolder\$AppFFolder ]`n"
     $StatusFReady = "8 [ $AppFName is Ready for Hunting... ]`n"
     $StatusFLoading = "9 [ Retrieving Data... ]`n"
+    $StatusFWipe = "10 [ Wiping $AppFName only, Don't forget to wipe THC :)]"
     $StatusFCreatedAppFLogFolder = "`n10 [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusFCreatedAppFImportLogFolder = "`n11 [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
     $StatusFExportComplete = "`n12 [ Exported raw logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
@@ -1117,7 +1142,8 @@ $AppFMenu = @"
 
          _______[ AUTORUNS MENU ]________
         |                                |
-        |    [Wipe] | Close and Wipe     |
+        |    [Wipe] | Wipe Autoruns      |
+        |    [Exit] | Exit Hard          |
         |    [Back] | Back to Main Menu  |
         |________________________________|`n `n
 "@
@@ -1225,6 +1251,9 @@ function AppFMenuMain{
                 AppFWipe
                 Show-Menu
             }
+            'Exit' {
+                ExitHard
+            }
             'Back' {
                 clear
                 Show-Menu
@@ -1248,6 +1277,7 @@ function AppFWipe {
     {
         'Y' {
             if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
+                Write-Host $StatusFWipe
                 set-location "$UserDesktopPath\$ParentFolder"
                 $null = taskkill /F /IM Autoruns.exe /T  
                 Start-Sleep -Seconds 2
@@ -1271,9 +1301,9 @@ until ($selectionAppFWipe -eq 'Y' -or $selectionAppFWipe -eq 'N' -or $selectionA
 $AppGName = "CTI Search"
 $AppGDescription = "Online Reputation Searcher"
 
-# VARIABLES - AppH (Wipe THC from endpoint) ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$AppHName = "Wipe THC & Exit"
-$AppHDescription = "Delete all THC folder/files, Exits"
+# VARIABLES - AppY (Wipe THC from endpoint) ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppYName = "Wipe THC & Exit"
+$AppYDescription = "Delete all THC folder/files, Exits"
 
 function WipeTHC {
     do
@@ -1283,18 +1313,27 @@ function WipeTHC {
     switch ($selectionWipeTHC)
     {
         'Y' {
+            #Closes AppF and removes
+            if (Test-Path "$UserDesktopPath\$ParentFolder\$AppFFolder") {
+                Write-Host "`n > Wiping Autoruns..."
+                set-location "$UserDesktopPath\$ParentFolder"
+                $null = taskkill /F /IM Autoruns.exe /T  
+                Start-Sleep -Seconds 2
+                Remove-Item -Recurse -Force "$UserDesktopPath\$ParentFolder\$AppFFolder"
+            }
+            #Remove Parent folder
             if (Test-Path "$UserDesktopPath\$ParentFolder") {
+                Write-Host "`n >> Wiping THC Folder..."
                 set-location "$UserDesktopPath"
                 Remove-Item "$UserDesktopPath\$ParentFolder" -Recurse -Force
                 [System.Environment]::Exit(0)
                 }
-        } 
+        }
         'N' {
             Show-Menu
             return
         }
     }
-    pause
  }
  until ($selection -eq 'N')
 }
@@ -1302,13 +1341,15 @@ function WipeTHC {
 # VARIABLES - AppX (More Info & Contact) ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $AppXName = "Contact"
 $AppXDescription = "More Info & Contact"
+$AppXBlankSpace = "                   "
+$AppXVersion = "Alpha 1.0"
+$AppxReleaseDate = "XX/xx/24"
+$AppXNotes = @"
+All mirrors are direct copies from official sources and hosted on my github. 
+Use a mirror if the main source is down or if they have updated their APP/URL`n
+"@
 
-$AppXContact = @" 
-$BannerX
-(All Mirrors are direct copies from official sources and hosted on my github. You may have to use a mirror if the main source is down or if they have updated their app/URL)`n
-
-For my hunters, I hope this brings you value. If you want to suggest, contribute, collaborate please reach out! `n
-
+$AppXConactInfo= @" 
      ___________________[ ADAM KIM ]_____________________
     |                                                    |
     | [Linkedin] https://www.linkedin.com/in/adamkim456/ |
@@ -1316,38 +1357,50 @@ For my hunters, I hope this brings you value. If you want to suggest, contribute
     | [GitHub]   https://github.com/resv                 |
     | [Email]    info@atomkim.com                        |
     |____________________________________________________|`n
+"@
 
+$AppXCreditsInfo= @" 
      ____________________[ CREDITS ]________________________
     |                                                       |
     | [DeepBlueCLI] Eric Conrad https://www.ericconrad.com/ |
-    | [Microsoft] Sysmon, Autoruns, Powershell              |
+    | [Sysmon] Microsoft Sysinternals                       |  
+    | [Autoruns] Microsoft Sysinternals                     |
+    | [Powershell] Microsoft Sysinternals                   |
     |_______________________________________________________|`n
 "@
 
-# VARIABLES - AppZ (Exit and keep CLI Open) -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$AppZName = "Soft Exit"
-$AppZDescription = "Exit THC and keep shell open"
-$ExitSoft = "exit"
+function AppXShowContact {
+    Write-Host $BannerX
+    Write-Host $AppXBlankSpace [ $AppXVersion $AppXReleaseDate ] `n 
+    Write-Host $AppXNotes -ForegroundColor Yellow
+    Write-Host $AppXConactInfo -ForegroundColor Cyan
+    Write-Host $AppXCreditsInfo -ForegroundColor DarkGray
+}
 
-# VARIABLES - AppZZ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$AppZZName = "Hard Exit"
-$AppZZDescription = "Exit THC and close shell"
+# VARIABLES - AppZ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$AppZName = "Hard Exit"
+$AppZDescription = "Exit THC and close shell"
+$AppZExitingNotification = "`n`n >>>>>>>>>>>>> Exiting, don't forget to wipe :)`n`n"
 $ExitHard = "[System.Environment]::Exit(0)"
+
+function ExitHard{
+    Write-Host $AppZExitingNotification -ForegroundColor Yellow
+    [System.Environment]::Exit(0)
+}
 
 # MainMenu ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $MenuMain = @" 
        [*] Double letter will use mirror if main source is down `n
        [A] $AppAName - $AppADescription
-      [B*] $AppBName - $AppBDescription 
-      [C*] $AppCName - $AppCDescription
+      [*B] $AppBName - $AppBDescription 
+      [*C] $AppCName - $AppCDescription
        [D] $AppDName - $AppDDescription
        [E] $AppEName - $AppEDescription
-      [F*] $AppFName - $AppFDescription
+      [*F] $AppFName - $AppFDescription
        [G] $AppGName - $AppGDescription
-       [H] $AppHName - $AppHDescription
        [X] $AppXName - $AppXDescription
-       [Z] $AppZName - $AppZDescription
-      [ZZ] $AppZZName - $AppZZDescription `n
+       [Y] $AppYName - $AppYDescription
+       [Z] $AppZName - $AppZDescription `n
 "@
 
 
@@ -1395,18 +1448,16 @@ do
         'G' {
         'CTI SEARCH'
         }
-        'H' {
-        WipeTHC
-        }
         'X' {
             Clear-Host
-            Write-Host $AppXContact     
+            AppXShowContact
+            pause    
+        }
+        'Y' {
+        WipeTHC
         }
         'Z' {
-        Invoke-Expression $ExitSoft
-        }
-        'ZZ' {
-        Invoke-Expression $ExitHard
+        ExitHard
         }
         '' {
         Show-Menu
