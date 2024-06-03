@@ -1416,13 +1416,13 @@ function ExitHard{
 # MainMenu ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $MenuMain = @" 
        [*] Double letter will use mirror if main source is down `n
-       [A] $AppAName - $AppADescription
+       [A] $AppAName - $AppADescription (WORKING)
       [*B] $AppBName - $AppBDescription 
-      [*C] $AppCName - $AppCDescription
-       [D] $AppDName - $AppDDescription
+      [*C] $AppCName - $AppCDescription (Working assuming you have sysmon already deployed properly)
+       [D] $AppDName - $AppDDescription 
        [E] $AppEName - $AppEDescription
-      [*F] $AppFName - $AppFDescription
-       [G] $AppGName - $AppGDescription
+      [*F] $AppFName - $AppFDescription (Working)
+       [G] $AppGName - $AppGDescription 
        [X] $AppXName - $AppXDescription
        [Y] $AppYName - $AppYDescription
        [Z] $AppZName - $AppZDescription `n
