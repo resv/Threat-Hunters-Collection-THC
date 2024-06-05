@@ -1,4 +1,4 @@
- 
+#Enable this script only: powershell.exe -noprofile -executionpolicy bypass -file .\THC.ps1  
 #(go down to execution line)
 ##Good quick info, implement later for hunters  https://mahim-firoj.medium.com/incident-response-and-threat-hunting-using-deepbluecli-tool-bf5d4c52c8a8
 
