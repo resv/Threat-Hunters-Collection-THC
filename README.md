@@ -55,7 +55,7 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 6. Hunt 😎
 
-![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMoreClose.png?raw=true)
+![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/THCReady.png?raw=true)
 
 
 ## ℹ️ Things to note
