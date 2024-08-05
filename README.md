@@ -49,7 +49,7 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
  - Don't forget to unrestrict when you leave
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```Set-ExecutionPolicy Res```**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```Set-ExecutionPolicy restricted```**
 
 ![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMoreClose.png?raw=true)
 
