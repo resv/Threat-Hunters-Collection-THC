@@ -62,7 +62,11 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 To be added later.
 
-Sysmon: Pre-req
+Sysmon - requires a few policy adjustments: enable Audit Process Creation, go straight to the [screenshots](https://mahim-firoj.medium.com/incident-response-and-threat-hunting-using-deepbluecli-tool-bf5d4c52c8a8)
+ - This process will be automated in the next release
+
+DeepBlueCLI - Aware of a few bugs
+ - This is being worked on.. 
 
 Please always exercise caution, use only if authorized.
 
