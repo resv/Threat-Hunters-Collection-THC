@@ -39,9 +39,10 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 ![Step 4a EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunOnce.png?raw=true)
 
- - Optionally you can unrestrict for repetitive usage
+5. [Optional] You can unrestrict for repetitive usage, then run THC.ps1
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```Set-ExecutionPolicy RemoteSigned```**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```./THC.ps1```**
 
 ![Step 4b EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMore.png?raw=true)
 
@@ -51,19 +52,18 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 ![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMoreClose.png?raw=true)
 
-5. Run the script.
-
 6. Hunt 😎
 
-## ℹ️ Usage/Examples
+![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMoreClose.png?raw=true)
 
-```javascript
-import Component from 'my-project'
 
-function App() {
-  return <Component />
-}
-```
+## ℹ️ Things to note
+
+To be added later.
+
+Sysmon: Pre-req
+
+Please always exercise caution, use only if authorized.
 
 
 ## 😊 About Me
