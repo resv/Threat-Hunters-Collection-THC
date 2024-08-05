@@ -3,7 +3,7 @@
 
 # for quicker testing: 
     #To Get status: Get-ExecutionPolicy
-    #To Set status unrestricted/remotesigned: Set-ExecutionPolicy RemoteSigned
+    #To Set status unrestricted/remotesigned: Set-ExecutionPolicy unrestricted
     #To Set status back to restricted: Set-ExecutionPolicy Res
 
 # Quick info for SYSMON policy changes required, go to for screenshots https://mahim-firoj.medium.com/incident-response-and-threat-hunting-using-deepbluecli-tool-bf5d4c52c8a8
