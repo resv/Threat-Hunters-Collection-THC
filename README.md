@@ -42,6 +42,7 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 5. [Optional] You can unrestrict for repetitive usage, then run THC.ps1
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```Set-ExecutionPolicy RemoteSigned```**
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```./THC.ps1```**
 
 ![Step 4b EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMore.png?raw=true)
