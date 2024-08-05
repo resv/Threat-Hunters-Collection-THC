@@ -2383,11 +2383,11 @@ ________________________________________________________________________________
     $AppWDescription = "Enumerate File Structure v4.19"
     $AppWFolder = "WizTree"
         # URLs
-        $AppWURLMain = "https://diskanalyzer.com/files/wiztree_4_19_portable.zip"
+        $AppWURLMain = "https://diskanalyzer.com/files/wiztree_4_20_portable.zip"
         $AppWURLMirror = "https://github.com/resv/THC-MIRROR-APPS/raw/main/WizTree/wiztree_4_19_portable.zip"
            
-    $AppWHashMain = "013917C5FB72E32FA1FCC4D1D6B57D130DA3E112DEF7ADE4429C8D23DC9B792B"
-    $AppWHashMirror = "013917C5FB72E32FA1FCC4D1D6B57D130DA3E112DEF7ADE4429C8D23DC9B792B"
+    $AppWHashMain = "8E336D7AC8D4028CAB6BF552BD63FA12277694DEB575F8FD3D4B585EB6B84CCB"
+    $AppWHashMirror = "8E336D7AC8D4028CAB6BF552BD63FA12277694DEB575F8FD3D4B585EB6B84CCB"
 
     # VARIABLES W - Status notifications
     $StatusWCreatedAppWFolder = "> [ Adding directory $UserDesktopPath\$ParentFolder\$AppWFolder ]`n"
