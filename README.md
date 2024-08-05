@@ -43,10 +43,8 @@ function App() {
 I'm a cybersecurity engineer for an primarily for the financial industry, along with many SMB clients.
 
 [Linkedin](https://www.linkedin.com/in/adamkim456/) | [Discord](https://discord.gg/HXNprdRD) | [GitHub](https://github.com/resv) | Email: adam@atomkim.com    
+[![Resv's github stats](https://github-readme-stats.vercel.app/api?username=resv)](https://github.com/resv) [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=resv&layout=compact)](https://github.com/resv)
 
-[![Anurag’s github stats](https://github-readme-stats.vercel.app/api?username=resv)](https://github.com/yushi1007)
-
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=resv&layout=compact)](https://github.com/yushi1007)
 ## Feedback
 
 If you have any feedback for suggestions, bugs, or ideas please reach out at adam@atomkim.com
