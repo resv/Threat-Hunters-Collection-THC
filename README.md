@@ -20,6 +20,7 @@ Threat Hunter`s Collection (THC)
 <!-- Social buttons -->
 [![resv - Threat-Hunters-Collection-THC](https://img.shields.io/static/v1?label=resv&message=Threat-Hunters-Collection-THC&color=blue&logo=github)](https://github.com/resv/Threat-Hunters-Collection-THC "Go to GitHub repo") [![stars - Threat-Hunters-Collection-THC](https://img.shields.io/github/stars/resv/Threat-Hunters-Collection-THC?style=social)](https://github.com/resv/Threat-Hunters-Collection-THC) [![forks - Threat-Hunters-Collection-THC](https://img.shields.io/github/forks/resv/Threat-Hunters-Collection-THC?style=social)](https://github.com/resv/Threat-Hunters-Collection-THC) [![GitHub release](https://img.shields.io/github/release/resv/Threat-Hunters-Collection-THC?include_prereleases=&sort=semver&color=blue)](https://github.com/resv/Threat-Hunters-Collection-THC/releases/) [![License](https://img.shields.io/badge/License-MIT-blue)](#license) [![issues - Threat-Hunters-Collection-THC](https://img.shields.io/github/issues/resv/Threat-Hunters-Collection-THC)](https://github.com/resv/Threat-Hunters-Collection-THC/issues)
 
+[TOCM]
 
 [TOC]
 
@@ -36,6 +37,7 @@ Threat Hunter`s Collection (THC)
 #####WizTree
 ##How to Deploy
 ##Things to Note
+
 
 
 
