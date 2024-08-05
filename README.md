@@ -19,15 +19,24 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 
 
-## ⚙️ How to Deploy
+## ⚙️ How to Start
 
-Install my-project with npm
+1. Download the single [THC](https://github.com/resv/Threat-Hunters-Collection-THC/raw/main/THC.ps1) powershell script (Optional: You can move the script to your desktop)
 
-```bash
-  npm install my-project
-  cd my-project
-```
-    
+![Step 1 Download](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/Download.png?raw=true)
+
+2. Run a powershell terminal as administrator.
+![Step 2 OpenPS](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/OpenPS.png?raw=true)
+
+3. Enable scripting, copy and paste this to your terminal 
+powershell.exe -noprofile -executionpolicy bypass -file .\THC.ps1
+
+
+(also found in the first line of the powershell script so you don't have to come here to copy pasta)
+
+4. Run the script.
+
+
 ## ℹ️ Usage/Examples
 
 ```javascript
@@ -43,8 +52,8 @@ function App() {
 I'm a cybersecurity engineer for an primarily for the financial industry, along with many SMB clients.
 
 [Linkedin](https://www.linkedin.com/in/adamkim456/) | [Discord](https://discord.gg/HXNprdRD) | [GitHub](https://github.com/resv) | Email: adam@atomkim.com    
-[![Resv's github stats](https://github-readme-stats.vercel.app/api?username=resv)](https://github.com/resv) [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=resv&layout=compact)](https://github.com/resv)
 
+[![Resv's github stats](https://github-readme-stats.vercel.app/api?username=resv)](https://github.com/resv) [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=resv&layout=compact)](https://github.com/resv)
 ## Feedback
 
 If you have any feedback for suggestions, bugs, or ideas please reach out at adam@atomkim.com
