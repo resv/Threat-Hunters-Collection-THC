@@ -26,16 +26,28 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 ![Step 1 Download](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/Download.png?raw=true)
 
 2. Run a powershell terminal as administrator.
+
 ![Step 2 OpenPS](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/OpenPS.png?raw=true)
 
-3. Enable scripting, copy and paste this to your terminal 
-powershell.exe -noprofile -executionpolicy bypass -file .\THC.ps1
+3. Traverse to your download folder or desktop (depending on where THC.ps1 is)
 
+![Step 3 Traverse to Directory](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/Traverse%20to%20file%20directory.png?raw=true)
 
-(also found in the first line of the powershell script so you don't have to come here to copy pasta)
+4. Enable scripting by pasting this to your terminal (also found in the first line of the powershell script so you don't have to come here to copy pasta)
+**```powershell.exe -noprofile -executionpolicy bypass -file .\THC.ps1```**
+![Step 4a EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunOnce.png?raw=true)
 
-4. Run the script.
+Optionally you can unrestrict for repetitive usage
+**```Set-ExecutionPolicy RemoteSigned```**
+![Step 4b EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMore.png?raw=true)
 
+Don't forget to unrestrict when you leave
+**```Set-ExecutionPolicy Res```**
+![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/RunMoreClose.png?raw=true)
+
+5. Run the script.
+
+6. Hunt 😎
 
 ## ℹ️ Usage/Examples
 
