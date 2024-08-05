@@ -2767,18 +2767,18 @@ function ExitHard{
 # MainMenu ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $MenuMain = @" 
        [*] Double letter will use mirror if main source is down `n
- [ WORKING ]       $AppAName  [A] $AppADescription
- [ WORKING ]          $AppBName [*B] $AppBDescription 
- [ WORKING ]     $AppCName [*C] $AppCDescription 
- [ WORKING ]        $AppFName [*F] $AppFDescription
- [ WORKING ]         $AppGName [*G] $AppGDescription
- [ WORKING ]         $AppHName [*H] $AppHDescription
- [ WORKING ]         $AppIName [*I] $AppIDescription
- [ WORKING ]      $AppJName [*J] $AppJDescription        
- [ WORKING ]         $AppWName [*W] $AppWDescription  
- [ WORKING ]         $AppXName  [X] $AppXDescription
- [ WORKING ] $AppYName  [Y] $AppYDescription
- [ WORKING ]       $AppZName  [Z] $AppZDescription `n
+        $AppAName  [A] $AppADescription
+           $AppBName [*B] $AppBDescription 
+      $AppCName [*C] $AppCDescription 
+         $AppFName [*F] $AppFDescription
+          $AppGName [*G] $AppGDescription
+          $AppHName [*H] $AppHDescription
+          $AppIName [*I] $AppIDescription
+       $AppJName [*J] $AppJDescription        
+          $AppWName [*W] $AppWDescription  
+          $AppXName  [X] $AppXDescription
+  $AppYName  [Y] $AppYDescription
+        $AppZName  [Z] $AppZDescription `n
 "@
 
 
