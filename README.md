@@ -41,7 +41,7 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 5. [Optional] You can unrestrict for repetitive usage, then run THC.ps1
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```Set-ExecutionPolicy RemoteSigned```**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```Set-ExecutionPolicy unrestricted```**
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **```.\THC.ps1```**
 
