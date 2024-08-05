@@ -7,7 +7,7 @@ This collection aims to simplify the threat hunting process by providing a singl
 The toolkit promotes portability, allowing hunters to be creative—whether on a USB drive, as an email template, or CURL it from a repository for convenient and efficient threat hunting on the go. Explore the tools, contribute to the project, and enhance your threat hunting capabilities with the Threat Hunter's Collection.
 ## ✅ Features
 
-- Host Info - Enumerate host info + stdoutu to an exportable .txt File
+- Host Info - Enumerate host info + stdout to an exportable .txt File
 - [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) - Log system activity to the Windows Event Log
 - [DeepBlueCLI](https://github.com/sans-blue-team/DeepBlueCLI) - Hunt via Sysmon & Windows Event Logs
 - [AutoRuns](https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns) - Hunt for scheduled tasks and persistence.
