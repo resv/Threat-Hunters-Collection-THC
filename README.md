@@ -13,3 +13,29 @@ The toolkit promotes portability, allowing users to carry it on a USB drive, ema
 I am constantly working to add more tools.  
 If you would like to have something added, please just reach out!    
 info@atomkim.com
+
+
+Threat Hunter`s Collection (THC)
+
+<!-- Social buttons -->
+[![resv - Threat-Hunters-Collection-THC](https://img.shields.io/static/v1?label=resv&message=Threat-Hunters-Collection-THC&color=blue&logo=github)](https://github.com/resv/Threat-Hunters-Collection-THC "Go to GitHub repo") [![stars - Threat-Hunters-Collection-THC](https://img.shields.io/github/stars/resv/Threat-Hunters-Collection-THC?style=social)](https://github.com/resv/Threat-Hunters-Collection-THC) [![forks - Threat-Hunters-Collection-THC](https://img.shields.io/github/forks/resv/Threat-Hunters-Collection-THC?style=social)](https://github.com/resv/Threat-Hunters-Collection-THC) [![GitHub release](https://img.shields.io/github/release/resv/Threat-Hunters-Collection-THC?include_prereleases=&sort=semver&color=blue)](https://github.com/resv/Threat-Hunters-Collection-THC/releases/) [![License](https://img.shields.io/badge/License-MIT-blue)](#license) [![issues - Threat-Hunters-Collection-THC](https://img.shields.io/github/issues/resv/Threat-Hunters-Collection-THC)](https://github.com/resv/Threat-Hunters-Collection-THC/issues)
+
+
+[TOC]
+
+##About
+##Features
+#####Host Info
+#####Sysmon
+#####DeepBlueCLI
+#####AutoRuns
+#####ProcMon
+#####ProcExp
+#####TCPView
+#####AccessEnum
+#####WizTree
+##How to Deploy
+##Things to Note
+
+
+
