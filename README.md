@@ -62,7 +62,7 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 To be added later.
 
-All downloads are checked against SHA256, if they do not match, it was either updated or compromised, use the mirror source, these mirror files are hosted here.
+Signatures - All downloads are checked against SHA256, if they do not match, it was either updated or compromised, use the mirror source, these mirror files are hosted here.
 
 Sysmon - requires a few policy adjustments: enable Audit Process Creation, go straight to the [screenshots](https://mahim-firoj.medium.com/incident-response-and-threat-hunting-using-deepbluecli-tool-bf5d4c52c8a8)
  - This process will be automated in the next release
@@ -70,7 +70,7 @@ Sysmon - requires a few policy adjustments: enable Audit Process Creation, go st
 DeepBlueCLI - Aware of a few bugs
  - This is being worked on..
 
-Remote Access & EDR is the private pro version for my own use, the code is not included in this repo.
+Pro version - Remote Access & EDR is the private pro version for my own use, the code is not included in this repo.
 
 Please always exercise caution, use only if authorized.
 
