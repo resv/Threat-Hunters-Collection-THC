@@ -70,9 +70,11 @@ Sysmon - requires a few policy adjustments: enable Audit Process Creation, go st
 DeepBlueCLI - Aware of a few bugs
  - This is being worked on..
 
-Pro version - Remote Access & EDR is the private pro version for my own use, the code is not included in this repo.
+Pro version - Remote access, EDR or other personal account bound apps
+ - Remote Access & EDR is the private pro version for my own use, the code is not included in this repo.
 
-32bit - I am incredibly disappointed that I have to accomodate for 32bit systems but that is the world we live in. I will also work on including this.
+32bit - Apparently, I've come across more 32bit systems that I anticipated..
+ - I am incredibly disappointed that I have to accomodate for 32bit systems but that is the world we live in. I will work on including this.
 
 Please always exercise caution, use only if authorized.
 
