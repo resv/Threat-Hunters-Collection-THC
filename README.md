@@ -72,6 +72,8 @@ DeepBlueCLI - Aware of a few bugs
 
 Pro version - Remote Access & EDR is the private pro version for my own use, the code is not included in this repo.
 
+32bit - I am incredibly disappointed that I have to accomodate for 32bit systems but that is the world we live in. I will also work on including this.
+
 Please always exercise caution, use only if authorized.
 
 
