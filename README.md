@@ -80,7 +80,7 @@ Please always exercise caution, use only if authorized.
 
 
 ## 😊 About Me
-I'm a cybersecurity engineer for an primarily for the financial industry, and enjoy helping small businesses who don't always have the budget for security or assistance.
+I'm a cybersecurity engineer for an primarily for the financial industry and I enjoy helping small businesses who don't always have the budget for security or assistance.
 
 [Linkedin](https://www.linkedin.com/in/adamkim456/) | [Discord](https://discord.gg/HXNprdRD) | [GitHub](https://github.com/resv) | Email: adam@atomkim.com    
 
