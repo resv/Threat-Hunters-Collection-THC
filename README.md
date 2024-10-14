@@ -57,6 +57,9 @@ The toolkit promotes portability, allowing hunters to be creative—whether on a
 
 ![Step 4c EnableScripting](https://github.com/resv/Threat-Hunters-Collection-THC/blob/main/ReadmeIMGS/THCReady.png?raw=true)
 
+## Update Log
+
+10/14/24 - Discovered that deploying DeepBlueCLI from the main source will throw a android malware detection on your AV. This is repo is directly from the author and I don't see any changes to his repo. Regardless, please use my mirror as that was the in a good state without throwing malware detection. Weird but glad I implemented hash checking to catch it :)
 
 ## ℹ️ Things to note
 
