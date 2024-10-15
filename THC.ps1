@@ -640,12 +640,12 @@ function RunImport{
 
     # This part does the record count for Import Menu
     $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$LogPathImportSecurity`" -MaxEvents 500000"
-    #$global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\System.evtx`" -MaxEvents 500000"
-    #$global:LogCountImportApplication = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Application.evtx`" -MaxEvents 500000"
+    $global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$LogPathImportSystem`" -MaxEvents 500000"
+    $global:LogCountImportApplication = Invoke-expression "get-winevent -Path `"$LogPathImportApplication`" -MaxEvents 500000"
     $global:LogCountImportAppLocker = Invoke-expression "get-winevent -Path `"$LogPathImportAppLocker`" -MaxEvents 500000"
-    #$global:LogCountImportPowerShell = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-PowerShell%4Operational.evtx`" -MaxEvents 500000"
-    #$global:LogCountImportSysmon = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-Sysmon%4Operational.evtx`" -MaxEvents 500000"
-    #$global:LogCountImportWMI = Invoke-expression "get-winevent -Path `"$UserDesktopPath\$ParentFolder\Import-Log-Folder\Microsoft-Windows-WMI-Activity%4Operational.evtx`" -MaxEvents 500000"
+    $global:LogCountImportPowerShell = Invoke-expression "get-winevent -Path `"$LogPathImportPowerShell`" -MaxEvents 500000"
+    $global:LogCountImportSysmon = Invoke-expression "get-winevent -Path `"$LogPathImportSysmon`" -MaxEvents 500000"
+    $global:LogCountImportWMI = Invoke-expression "get-winevent -Path `"$LogPathImportWMI`" -MaxEvents 500000"
 
     do
     {
