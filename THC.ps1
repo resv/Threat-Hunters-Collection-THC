@@ -445,7 +445,7 @@ ________________________________________________________________________________
     $StatusCCreatedAppCLogFolder = "`n>>>>>>>>> [ Adding new directory `"$Hostname-Evtx-Logs`" ]`n"
     $StatusCCreatedAppCImportLogFolder = "`n>>>>>>>> [ Adding new directories $UserDesktopPath\$ParentFolder\Import-Log-Folder ]`n"
     $StatusCExportComplete = "`n>>>>>>>>>>> [ Exported raw logs to $UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs ]`n"
-    $DeepBlueExecute = ".\DeepBlue.ps1"
+    $DeepBlueExecute = "& `"$UserDesktopPath\$ParentFolder\$AppCFolder\DeepBlue.ps1`"" 
     $LogPathExportFolder = "$UserDesktopPath\$ParentFolder\$Hostname-Evtx-Logs"
     $LogPathImportFolder = "$UserDesktopPath\$ParentFolder\Import-Log-Folder"
     $LogPathSecurity = "C:\Windows\System32\winevt\Logs\Security.evtx"
@@ -639,6 +639,46 @@ function RunImport{
     Write-Host "                            Checking record count, this can take a long time...                                       " -ForegroundColor Yellow
 
     # This part does the record count for Import Menu
+function CheckImportedFilesExist{
+    Write-Host "Checking for Imported evtx Files:"
+    if (Test-Path $LogPathImportSecurity) {
+        Write-Host "SECURITY EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "SECURITY EVTX NOT DETECTED" -ForegroundColor Red
+    }
+    if (Test-Path $LogPathImportSystem) {
+        Write-Host "SYSTEM EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "SYSTEM EVTX NOT DETECTED" -ForegroundColor Red
+    }
+    if (Test-Path $LogPathImportApplication) {
+        Write-Host "APPLICATION EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "APPLICATION EVTX NOT DETECTED" -ForegroundColor Red
+    }
+    if (Test-Path $LogPathImportAppLocker) {
+        Write-Host "APPLOCKER EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "APPLOCKER EVTX NOT DETECTED" -ForegroundColor Red
+    }
+    if (Test-Path $LogPathImportPowerShell) {
+        Write-Host "POWERSHELL EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "POWERSHELL EVTX NOT DETECTED" -ForegroundColor Red
+    }
+    if (Test-Path $LogPathImportSysmon) {
+        Write-Host "SYSMON EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "SYSMON EVTX NOT DETECTED" -ForegroundColor Red
+    }
+    if (Test-Path $LogPathImportWMI) {
+        Write-Host "WMI EVTX DETECTED" -ForegroundColor Green
+    } else {
+        Write-Host "WMI EVTX NOT DETECTED" -ForegroundColor Red
+    }
+}
+    CheckImportedFilesExist
+
     $global:LogCountImportSecurity = Invoke-expression "get-winevent -Path `"$LogPathImportSecurity`" -MaxEvents 500000"
     $global:LogCountImportSystem = Invoke-expression "get-winevent -Path `"$LogPathImportSystem`" -MaxEvents 500000"
     $global:LogCountImportApplication = Invoke-expression "get-winevent -Path `"$LogPathImportApplication`" -MaxEvents 500000"
@@ -670,19 +710,19 @@ function RunImport{
                         }
                     'Grid' {
                         $global:LogFormat = $PipeGrid
-                        RunDeepBlueImported
+                        RunDeepBlue
                         } 
                     'Html' {
                         $global:LogFormat = $PipeHtml
-                        RunDeepBlueImported
+                        RunDeepBlue
                         } 
                     'Json' {
                         $global:LogFormat = $PipeJson
-                        RunDeepBlueImported
+                        RunDeepBlue
                         } 
                     'Xml' {
                         $global:LogFormat = $PipeXml
-                        RunDeepBlueImported
+                        RunDeepBlue
                         }
                     'Records'{
                         $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
@@ -721,19 +761,19 @@ function RunImport{
                         }
                     'Grid' {
                         $global:LogFormat = $PipeGrid
-                        RunDeepBlueImported
+                        RunDeepBlue
                         } 
                     'Html' {
                         $global:LogFormat = $PipeHtml
-                        RunDeepBlueImported
+                        RunDeepBlue
                         } 
                     'Json' {
                         $global:LogFormat = $PipeJson
-                        RunDeepBlueImported
+                        RunDeepBlue
                         } 
                     'Xml' {
                         $global:LogFormat = $PipeXml
-                        RunDeepBlueImported
+                        RunDeepBlue
                         }
                     'Records'{
                         $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
@@ -755,19 +795,259 @@ function RunImport{
                 pause
             }
             'Application' {
-            #Applicationflow
+            clear
+                Write-Host $BannerC
+                $global:LogTarget = "Imported Application"
+                $global:LogType = $LogPathImportApplication
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlue
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlue
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlue
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlue
+                        }
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
+                        switch ($selection3Import)
+                        {
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
+                        }
+                    }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
             } 
             'AppLocker' {
-            #Applockerflow
+            clear
+                Write-Host $BannerC
+                $global:LogTarget = "Imported AppLocker"
+                $global:LogType = $LogPathImportAppLocker
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlue
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlue
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlue
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlue
+                        }
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
+                        switch ($selection3Import)
+                        {
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
+                        }
+                    }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
             } 
             'PowerShell' {
-                #Powershellflow
+                clear
+                Write-Host $BannerC
+                $global:LogTarget = "Imported PowerShell"
+                $global:LogType = $LogPathImportPowerShell
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlue
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlue
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlue
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlue
+                        }
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
+                        switch ($selection3Import)
+                        {
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
+                        }
+                    }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
             } 
             'Sysmon' {
-            #Sysmonflow
+                clear
+                Write-Host $BannerC
+                $global:LogTarget = "Imported Sysmon"
+                $global:LogType = $LogPathImportSysmon
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlue
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlue
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlue
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlue
+                        }
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
+                        switch ($selection3Import)
+                        {
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
+                        }
+                    }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
             } 
             'WMI' {
-            #WMI flow
+            clear
+                Write-Host $BannerC
+                $global:LogTarget = "Imported WMI"
+                $global:LogType = $LogPathImportWMI
+                $selection2Import = Read-Host $AppCMenuImportSub "$global:LogTarget log sub menu, waiting for your input"
+                switch ($selection2Import)
+                {
+                    'List' {
+                        $global:LogFormat = $PipeList
+                        RunDeepBlue
+                        } 
+                    'table' {
+                        $global:LogFormat = $PipeTable
+                        RunDeepBlue
+                        }
+                    'Grid' {
+                        $global:LogFormat = $PipeGrid
+                        RunDeepBlue
+                        } 
+                    'Html' {
+                        $global:LogFormat = $PipeHtml
+                        RunDeepBlue
+                        } 
+                    'Json' {
+                        $global:LogFormat = $PipeJson
+                        RunDeepBlue
+                        } 
+                    'Xml' {
+                        $global:LogFormat = $PipeXml
+                        RunDeepBlue
+                        }
+                    'Records'{
+                        $selection3Import = Read-Host "Check the imported evtx exists under the default filename, This can take a long time, are you sure you want to continue? (Y/N)"
+                        switch ($selection3Import)
+                        {
+                            'Y'{RunImportRecordCount($LogTarget)} 
+                            'N'{AppCMenuImportMain}
+                        }
+                    }
+                    'Help' {
+                        Clear-Host
+                        Write-Host $BannerC
+                        Write-Host $DBCLIHelp      
+                        }        
+                    'Back' {
+                        AppCMenuImportMain
+                        } 
+                }
+                pause
             }
             'Help' {
                 Clear-Host
@@ -824,6 +1104,9 @@ function RunDeepBlue{
     # Welcome BannerAppC
     Write-Host $BannerC
     
+    # Ensure we are at DeepBlueFolder to run script incase we used import first (import changes dir)
+    set-location "$UserDesktopPath\$ParentFolder\$AppCFolder"
+
     # Switch reading what the LogTarget is then getting the explicit LogCount
     switch ($LogTarget) {
         "Security"     { $LogCount = $LogCountSecurity }
@@ -846,7 +1129,7 @@ function RunDeepBlue{
     Write-Host ">>>>>>>> [ Hunting Through $LogCount $LogTarget Records ]"
     
     # Store DeepBlue explicit request so we can check use this to check for blank results with the if statement
-    $output = Invoke-expression ".\DeepBlue.ps1 $LogType $LogFormat"
+    $output = Invoke-expression "$DeepBlueExecute $LogType $LogFormat"  
 
     # Check if the results are is empty and notify user if so.
     if (-not $output) {
@@ -856,6 +1139,8 @@ function RunDeepBlue{
     $output
     }
 }
+
+
 
 # AppC (DBCLI) Main Menu
 function DBCLIMenuMain{
